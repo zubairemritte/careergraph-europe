@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="CareerGraph Europe — traceable skill intelligence from observed job offers, with explicit country coverage.">
+  <title>CareerGraph Europe · Skills, with evidence</title>
+  <link rel="icon" href="/assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/style.css">
+  <script src="/assets/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#explore">Skip to analysis</a>
+  <div class="page">
+    <header class="masthead">
+      <a class="brand" href="/" aria-label="CareerGraph Europe home"><img src="/assets/mark.svg" alt="" width="38" height="38"><span>CareerGraph <em>Europe</em></span></a>
+      <nav aria-label="Main navigation"><a href="#explore">Explore</a><a href="#evidence">Evidence</a><a href="#coverage">Coverage</a><a href="https://github.com/zubairemritte/careergraph-europe" target="_blank" rel="noopener noreferrer">The project ↗</a></nav>
+    </header>
+
+    <section class="intro" aria-labelledby="title">
+      <div><p class="eyebrow">A field guide to skills & opportunity</p><h1 id="title">Read the demand.<br><span>Choose your next skill.</span></h1></div>
+      <div class="intro-note"><span class="index">01 / CAREER INTELLIGENCE</span><p>Every number has a sample.<br>Every skill has evidence.<br>Every country has a coverage record.</p><span class="byline">An independent project by Zubair Emritte</span></div>
+    </section>
+
+    <main>
+      <section id="explore" aria-labelledby="explore-title">
+        <div class="section-head"><h2 id="explore-title"><span>01</span> Set your field of view</h2><span class="small">Release 0.1 · Local research application</span></div>
+        <div class="controls">
+          <div class="control mode"><label for="mode">Offer dataset</label><select id="mode"><option value="demo">Illustrative demo</option><option value="live">Collected offers</option></select></div>
+          <div class="control"><label for="country">Country</label><select id="country"><option value="ALL">All configured countries</option></select></div>
+          <div class="control"><label for="role">Role family</label><select id="role"><option value="all">All role families</option></select></div>
+          <div class="control"><label for="since">Published from</label><input id="since" type="date"></div>
+          <button id="refresh" class="button primary" type="button">Update view <span aria-hidden="true">↗</span></button>
+        </div>
+        <p id="dataset-note" class="notice" role="status">Loading the sample…</p>
+        <p id="error" class="error" role="alert" hidden></p>
+      </section>
+
+      <div id="report" aria-busy="true" hidden>
+        <section class="sample-strip" aria-label="Sample summary">
+          <div><span id="sample-n" class="stat">—</span><span class="stat-label">offers in this sample</span></div>
+          <div><span id="skill-n" class="stat">—</span><span class="stat-label">with detected skills</span></div>
+          <div><span id="source-n" class="stat">—</span><span class="stat-label">offer sources</span></div>
+          <div class="sample-period"><span class="eyebrow">Publication window</span><strong id="sample-period">—</strong><span id="sample-status" class="small"></span></div>
+        </section>
+
+        <div class="analysis-grid">
+          <section class="demand" aria-labelledby="demand-title">
+            <div class="section-head"><h2 id="demand-title"><span>02</span> The observed skill mix</h2></div>
+            <p class="lede">Share of sampled offers mentioning each skill. An offer can mention several skills.</p>
+            <div class="bar-legend"><span>Skill</span><span>Offers / sample</span></div>
+            <div id="skill-bars"></div>
+            <p class="footnote">Description mentions only, including optional or negated mentions. This is not a national market-share estimate.</p>
+            <details class="relationships"><summary>Skills appearing together <span aria-hidden="true">+</span></summary><p class="small">At least 3 shared offers. Jaccard measures overlap, not causation.</p><div id="relationships"></div></details>
+          </section>
+
+          <section class="bridge" aria-labelledby="bridge-title">
+            <div class="section-head"><h2 id="bridge-title"><span>03</span> One skill further</h2></div>
+            <p class="lede">Which single addition completes the detected skill set of more offers in your sample?</p>
+            <details class="skill-picker" open><summary>Your current skills <span aria-hidden="true">Edit ↗</span></summary><div id="known-skills" class="skill-options" aria-label="Choose your current skills"></div></details>
+            <div class="bridge-baseline"><strong id="covered">—</strong><span id="covered-label">offers already covered</span></div>
+            <div id="bridge-list"></div>
+            <p id="bridge-denominator" class="footnote"></p>
+            <p class="footnote">Coverage is not eligibility. Experience, language, seniority and unrecognised skills remain outside this calculation. Additions are evaluated separately.</p>
+          </section>
+        </div>
+
+        <section id="evidence" class="evidence" aria-labelledby="evidence-title">
+          <div class="section-head"><h2 id="evidence-title"><span>04</span> Follow the evidence</h2><button id="clear-evidence" class="text-button" hidden>Show all sampled offers</button></div>
+          <p id="evidence-note" class="lede"></p><div id="offer-list"></div>
+          <div class="pagination"><button id="previous" class="button" type="button">← Previous</button><span id="page-info" class="small"></span><button id="next" class="button" type="button">Next →</button></div>
+        </section>
+
+        <section class="economy" aria-labelledby="economy-title">
+          <div class="section-head"><h2 id="economy-title"><span>05</span> A wider economic lens</h2><span class="source-label">EUROSTAT / OFFICIAL STATISTICS</span></div>
+          <div class="economy-grid"><div><h3>Demand has a context.</h3><p>Job vacancy rates describe unfilled posts in the covered economy. They provide context for the offer sample, but do not measure demand for data professionals.</p><p class="small">Same series and quarter across countries. National coverage exceptions and published status flags still matter.</p><a href="https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Job_vacancy_statistics" target="_blank" rel="noopener noreferrer">Read the source methodology ↗</a></div><div><p id="benchmark-period" class="eyebrow"></p><div id="benchmark-table" class="table-scroll"></div></div></div>
+          <p id="benchmark-source" class="footnote"></p>
+        </section>
+
+        <section id="coverage" aria-labelledby="coverage-title">
+          <div class="section-head"><h2 id="coverage-title"><span>06</span> Coverage is part of the result</h2></div>
+          <p class="lede">A configured country is not automatically a collected market. Missing data never becomes zero demand.</p>
+          <div id="coverage-table" class="table-scroll"></div>
+          <details class="audit"><summary>Inspect the collection record <span aria-hidden="true">+</span></summary><p id="quality-summary"></p><p class="small">These counts refer to whole collection runs, before the filters above. Successful snapshots are retained; a failed refresh does not replace them.</p><pre id="run-record"></pre></details>
+        </section>
+      </div>
+    </main>
+    <footer><div class="footer-signature">CG / <span>Skills, with evidence.</span></div><p>Built by <a href="https://github.com/zubairemritte">Zubair Emritte</a><br><a href="https://github.com/zubairemritte/careergraph-europe/tree/main/docs">Methodology & source register</a> · <a href="/docs">API</a></p><p class="small">No account. No CV upload.<br>Your skill selection is held in this page only.</p></footer>
+  </div>
+</body>
+</html>

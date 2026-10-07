@@ -1,0 +1,799 @@
+{
+  "retrieved_at": "2026-10-07T18:52:35.773165+00:00",
+  "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/jvs_q_r21?lang=EN&freq=Q&nace_r2_1=B-T&sizeclas=TOTAL&s_adj=SA&indic_em=JVR&lastTimePeriod=8",
+  "payload_sha256": "8f63653f6f28fe1963182193a82e9bcd436dd38be8fb81ff511db84d6c0d795b",
+  "metadata": {
+    "dataset": "jvs_q_r21",
+    "label": "Job vacancy statistics by NACE Rev. 2.1 activity - quarterly data (from 2001 onwards)",
+    "dimensions": {
+      "freq": "Q",
+      "nace_r2_1": "B-T",
+      "sizeclas": "TOTAL",
+      "s_adj": "SA",
+      "indic_em": "JVR"
+    },
+    "quarters": [
+      "2024-Q3",
+      "2024-Q4",
+      "2025-Q1",
+      "2025-Q2",
+      "2025-Q3",
+      "2025-Q4",
+      "2026-Q1",
+      "2026-Q2"
+    ],
+    "source_updated_at": "2026-09-15T11:00:00+0200",
+    "unit": "percent",
+    "scope": "B–T economy; not a data-occupation series"
+  },
+  "rows": [
+    {
+      "country": "AT",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 3.8,
+      "status_flag": null
+    },
+    {
+      "country": "AT",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 3.8,
+      "status_flag": null
+    },
+    {
+      "country": "AT",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 3.4,
+      "status_flag": null
+    },
+    {
+      "country": "AT",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 3.4,
+      "status_flag": null
+    },
+    {
+      "country": "AT",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 3.2,
+      "status_flag": null
+    },
+    {
+      "country": "AT",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 3.0,
+      "status_flag": null
+    },
+    {
+      "country": "AT",
+      "quarter": "2026-Q1",
+      "vacancy_rate": 3.0,
+      "status_flag": null
+    },
+    {
+      "country": "AT",
+      "quarter": "2026-Q2",
+      "vacancy_rate": 2.8,
+      "status_flag": null
+    },
+    {
+      "country": "BE",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 4.2,
+      "status_flag": null
+    },
+    {
+      "country": "BE",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 4.1,
+      "status_flag": null
+    },
+    {
+      "country": "BE",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 4.1,
+      "status_flag": null
+    },
+    {
+      "country": "BE",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 3.9,
+      "status_flag": null
+    },
+    {
+      "country": "BE",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 3.7,
+      "status_flag": null
+    },
+    {
+      "country": "BE",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 3.6,
+      "status_flag": null
+    },
+    {
+      "country": "BE",
+      "quarter": "2026-Q1",
+      "vacancy_rate": 3.4,
+      "status_flag": null
+    },
+    {
+      "country": "BE",
+      "quarter": "2026-Q2",
+      "vacancy_rate": 3.3,
+      "status_flag": null
+    },
+    {
+      "country": "DK",
+      "quarter": "2024-Q3",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "DK",
+      "quarter": "2024-Q4",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "DK",
+      "quarter": "2025-Q1",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "DK",
+      "quarter": "2025-Q2",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "DK",
+      "quarter": "2025-Q3",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "DK",
+      "quarter": "2025-Q4",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "DK",
+      "quarter": "2026-Q1",
+      "vacancy_rate": 2.1,
+      "status_flag": "d"
+    },
+    {
+      "country": "DK",
+      "quarter": "2026-Q2",
+      "vacancy_rate": 2.3,
+      "status_flag": "d"
+    },
+    {
+      "country": "FI",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 1.7,
+      "status_flag": null
+    },
+    {
+      "country": "FI",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 1.6,
+      "status_flag": null
+    },
+    {
+      "country": "FI",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 1.5,
+      "status_flag": null
+    },
+    {
+      "country": "FI",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "FI",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "FI",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 1.2,
+      "status_flag": null
+    },
+    {
+      "country": "FI",
+      "quarter": "2026-Q1",
+      "vacancy_rate": 1.2,
+      "status_flag": null
+    },
+    {
+      "country": "FI",
+      "quarter": "2026-Q2",
+      "vacancy_rate": 1.2,
+      "status_flag": null
+    },
+    {
+      "country": "FR",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 2.6,
+      "status_flag": "d"
+    },
+    {
+      "country": "FR",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 2.4,
+      "status_flag": "d"
+    },
+    {
+      "country": "FR",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 2.5,
+      "status_flag": "d"
+    },
+    {
+      "country": "FR",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 2.4,
+      "status_flag": "d"
+    },
+    {
+      "country": "FR",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 2.4,
+      "status_flag": "d"
+    },
+    {
+      "country": "FR",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 2.4,
+      "status_flag": "d"
+    },
+    {
+      "country": "FR",
+      "quarter": "2026-Q1",
+      "vacancy_rate": 2.4,
+      "status_flag": "d"
+    },
+    {
+      "country": "FR",
+      "quarter": "2026-Q2",
+      "vacancy_rate": 2.3,
+      "status_flag": "d"
+    },
+    {
+      "country": "DE",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 3.1,
+      "status_flag": null
+    },
+    {
+      "country": "DE",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 3.3,
+      "status_flag": null
+    },
+    {
+      "country": "DE",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 2.7,
+      "status_flag": null
+    },
+    {
+      "country": "DE",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 2.6,
+      "status_flag": null
+    },
+    {
+      "country": "DE",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 2.6,
+      "status_flag": null
+    },
+    {
+      "country": "DE",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 2.7,
+      "status_flag": null
+    },
+    {
+      "country": "DE",
+      "quarter": "2026-Q1",
+      "vacancy_rate": 2.6,
+      "status_flag": null
+    },
+    {
+      "country": "DE",
+      "quarter": "2026-Q2",
+      "vacancy_rate": 2.5,
+      "status_flag": null
+    },
+    {
+      "country": "IE",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 1.2,
+      "status_flag": null
+    },
+    {
+      "country": "IE",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 1.2,
+      "status_flag": null
+    },
+    {
+      "country": "IE",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "IE",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "IE",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "IE",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "IE",
+      "quarter": "2026-Q1",
+      "vacancy_rate": 1.2,
+      "status_flag": null
+    },
+    {
+      "country": "IE",
+      "quarter": "2026-Q2",
+      "vacancy_rate": 1.2,
+      "status_flag": "p"
+    },
+    {
+      "country": "IT",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 2.0,
+      "status_flag": "d"
+    },
+    {
+      "country": "IT",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 2.0,
+      "status_flag": "d"
+    },
+    {
+      "country": "IT",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 1.9,
+      "status_flag": "d"
+    },
+    {
+      "country": "IT",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 1.8,
+      "status_flag": "d"
+    },
+    {
+      "country": "IT",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 1.9,
+      "status_flag": "d"
+    },
+    {
+      "country": "IT",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 1.8,
+      "status_flag": "d"
+    },
+    {
+      "country": "IT",
+      "quarter": "2026-Q1",
+      "vacancy_rate": 1.7,
+      "status_flag": "d"
+    },
+    {
+      "country": "IT",
+      "quarter": "2026-Q2",
+      "vacancy_rate": 1.6,
+      "status_flag": "d"
+    },
+    {
+      "country": "LU",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 1.4,
+      "status_flag": null
+    },
+    {
+      "country": "LU",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "LU",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 1.4,
+      "status_flag": null
+    },
+    {
+      "country": "LU",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "LU",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "LU",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "LU",
+      "quarter": "2026-Q1",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "LU",
+      "quarter": "2026-Q2",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "NL",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 4.3,
+      "status_flag": "p"
+    },
+    {
+      "country": "NL",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 4.3,
+      "status_flag": "p"
+    },
+    {
+      "country": "NL",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 4.2,
+      "status_flag": "p"
+    },
+    {
+      "country": "NL",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 4.1,
+      "status_flag": "p"
+    },
+    {
+      "country": "NL",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 4.1,
+      "status_flag": "p"
+    },
+    {
+      "country": "NL",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 4.0,
+      "status_flag": "p"
+    },
+    {
+      "country": "NL",
+      "quarter": "2026-Q1",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "NL",
+      "quarter": "2026-Q2",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "PL",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 0.9,
+      "status_flag": null
+    },
+    {
+      "country": "PL",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 0.8,
+      "status_flag": null
+    },
+    {
+      "country": "PL",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 0.8,
+      "status_flag": null
+    },
+    {
+      "country": "PL",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 0.8,
+      "status_flag": null
+    },
+    {
+      "country": "PL",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 0.8,
+      "status_flag": null
+    },
+    {
+      "country": "PL",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 0.8,
+      "status_flag": null
+    },
+    {
+      "country": "PL",
+      "quarter": "2026-Q1",
+      "vacancy_rate": 0.8,
+      "status_flag": null
+    },
+    {
+      "country": "PL",
+      "quarter": "2026-Q2",
+      "vacancy_rate": 0.8,
+      "status_flag": null
+    },
+    {
+      "country": "PT",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "PT",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "PT",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 1.5,
+      "status_flag": null
+    },
+    {
+      "country": "PT",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 1.3,
+      "status_flag": null
+    },
+    {
+      "country": "PT",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 1.4,
+      "status_flag": null
+    },
+    {
+      "country": "PT",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 1.5,
+      "status_flag": null
+    },
+    {
+      "country": "PT",
+      "quarter": "2026-Q1",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "PT",
+      "quarter": "2026-Q2",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "ES",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 0.9,
+      "status_flag": null
+    },
+    {
+      "country": "ES",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 0.9,
+      "status_flag": null
+    },
+    {
+      "country": "ES",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 0.9,
+      "status_flag": null
+    },
+    {
+      "country": "ES",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 0.9,
+      "status_flag": null
+    },
+    {
+      "country": "ES",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 0.9,
+      "status_flag": null
+    },
+    {
+      "country": "ES",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 0.9,
+      "status_flag": null
+    },
+    {
+      "country": "ES",
+      "quarter": "2026-Q1",
+      "vacancy_rate": 0.9,
+      "status_flag": null
+    },
+    {
+      "country": "ES",
+      "quarter": "2026-Q2",
+      "vacancy_rate": 0.8,
+      "status_flag": "p"
+    },
+    {
+      "country": "SE",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 2.2,
+      "status_flag": null
+    },
+    {
+      "country": "SE",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 2.2,
+      "status_flag": null
+    },
+    {
+      "country": "SE",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 2.0,
+      "status_flag": null
+    },
+    {
+      "country": "SE",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 1.9,
+      "status_flag": null
+    },
+    {
+      "country": "SE",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 1.9,
+      "status_flag": null
+    },
+    {
+      "country": "SE",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 2.0,
+      "status_flag": null
+    },
+    {
+      "country": "SE",
+      "quarter": "2026-Q1",
+      "vacancy_rate": 1.9,
+      "status_flag": null
+    },
+    {
+      "country": "SE",
+      "quarter": "2026-Q2",
+      "vacancy_rate": 2.0,
+      "status_flag": null
+    },
+    {
+      "country": "CH",
+      "quarter": "2024-Q3",
+      "vacancy_rate": 1.8,
+      "status_flag": null
+    },
+    {
+      "country": "CH",
+      "quarter": "2024-Q4",
+      "vacancy_rate": 1.7,
+      "status_flag": null
+    },
+    {
+      "country": "CH",
+      "quarter": "2025-Q1",
+      "vacancy_rate": 1.6,
+      "status_flag": null
+    },
+    {
+      "country": "CH",
+      "quarter": "2025-Q2",
+      "vacancy_rate": 1.6,
+      "status_flag": null
+    },
+    {
+      "country": "CH",
+      "quarter": "2025-Q3",
+      "vacancy_rate": 1.6,
+      "status_flag": null
+    },
+    {
+      "country": "CH",
+      "quarter": "2025-Q4",
+      "vacancy_rate": 1.6,
+      "status_flag": null
+    },
+    {
+      "country": "CH",
+      "quarter": "2026-Q1",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "CH",
+      "quarter": "2026-Q2",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "GB",
+      "quarter": "2024-Q3",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "GB",
+      "quarter": "2024-Q4",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "GB",
+      "quarter": "2025-Q1",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "GB",
+      "quarter": "2025-Q2",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "GB",
+      "quarter": "2025-Q3",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "GB",
+      "quarter": "2025-Q4",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "GB",
+      "quarter": "2026-Q1",
+      "vacancy_rate": null,
+      "status_flag": null
+    },
+    {
+      "country": "GB",
+      "quarter": "2026-Q2",
+      "vacancy_rate": null,
+      "status_flag": null
+    }
+  ]
+}

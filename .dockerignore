@@ -1,0 +1,15 @@
+.git
+.venv
+data
+private
+__pycache__
+*.pyc
+*.db
+*.db-*
+.env
+.env.*
+.pytest_cache
+.ruff_cache
+tests
+docs
+*.egg-info

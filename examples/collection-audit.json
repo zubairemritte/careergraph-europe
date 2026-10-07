@@ -1,0 +1,77 @@
+{
+  "checked_at": "2026-10-07",
+  "scope": "Executed local source smoke run; counts are not a European labour-market estimate.",
+  "source": "jobtech",
+  "workplace_country": "SE",
+  "run": {
+    "input_records": 317,
+    "accepted_offers": 287,
+    "duplicates_removed": 27,
+    "rejected_records": 3,
+    "rejection_reasons": {
+      "outside_verified_country": 3
+    },
+    "rejection_examples": [
+      {
+        "source_id": "31537241",
+        "reason": "outside_verified_country"
+      },
+      {
+        "source_id": "31460944",
+        "reason": "outside_verified_country"
+      },
+      {
+        "source_id": "31555604",
+        "reason": "outside_verified_country"
+      }
+    ],
+    "offers_with_skills": 189,
+    "as_of": "2026-10-07",
+    "collection": {
+      "requests": [
+        {
+          "url": "https://jobsearch.api.jobtechdev.se/search?q=data+analyst&offset=0&limit=100",
+          "records": 15,
+          "sha256": "34b24aba2f1cda19f92767ee0d6cf6ea47e7f362a4861de5f34901053c3914f3"
+        },
+        {
+          "url": "https://jobsearch.api.jobtechdev.se/search?q=data+engineer&offset=0&limit=100",
+          "records": 81,
+          "sha256": "2e4a67fd14b09ee9e6f6ec4671684deaa4ee492933e2e37800390aa6ce1dd7f4"
+        },
+        {
+          "url": "https://jobsearch.api.jobtechdev.se/search?q=data+scientist&offset=0&limit=100",
+          "records": 21,
+          "sha256": "f764f61a5277f7489729131056a56de9b7c979484ee801bd1dc5d80e55399f3d"
+        },
+        {
+          "url": "https://jobsearch.api.jobtechdev.se/search?q=analytics+engineer&offset=0&limit=100",
+          "records": 100,
+          "sha256": "9db20d87a8a662a73a771f5792f07733062dc100779d0847753e611277def24c"
+        },
+        {
+          "url": "https://jobsearch.api.jobtechdev.se/search?q=analytics+engineer&offset=100&limit=100",
+          "records": 100,
+          "sha256": "36e9acfaf24b5a7e2685860e777eee248df19e93d2926f7833902af0e3e13989"
+        }
+      ],
+      "reported_query_totals": {
+        "data analyst": 15,
+        "data engineer": 81,
+        "data scientist": 21,
+        "analytics engineer": 1382
+      },
+      "capped_queries": [
+        "analytics engineer"
+      ],
+      "query_totals_are_not_additive": true
+    }
+  },
+  "roles": {
+    "other": 200,
+    "data_engineer": 64,
+    "data_analyst": 9,
+    "analytics_engineer": 6,
+    "data_scientist": 8
+  }
+}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 388" role="img" aria-labelledby="title desc">
+<title id="title">CareerGraph Europe — Skills, with evidence.</title><desc id="desc">An analytical portfolio project by Zubair Emritte. An illustrative three-offer example shows how adding dbt to Python and SQL covers two additional detected skill sets.</desc>
+<rect width="1440" height="388" fill="#f4f0e7"/><path d="M48 52h1344M48 338h1344" stroke="#c3bdb0"/>
+<g font-family="Courier New,monospace" font-size="13" letter-spacing="2" fill="#646b62"><text x="48" y="34">ZUBAIR EMRITTE / DATA PORTFOLIO</text><text x="1160" y="34">PROJECT 01 · v0.1</text></g>
+<text x="48" y="141" font-family="Georgia,serif" font-size="71" letter-spacing="-2" fill="#242d2a">CareerGraph Europe</text>
+<text x="51" y="193" font-family="Georgia,serif" font-size="37" fill="#355d4a">Skills, with evidence.</text>
+<text x="51" y="244" font-family="Arial,sans-serif" font-size="19" fill="#5e655e">Read an observed market. Trace each skill.</text><text x="51" y="273" font-family="Arial,sans-serif" font-size="19" fill="#5e655e">Understand what one addition changes.</text>
+<path d="M873 80v227" stroke="#c3bdb0"/>
+<g font-family="Courier New,monospace" font-size="12" letter-spacing="1.5" fill="#aa402e"><text x="917" y="94">AN EXPLAINED EXAMPLE</text></g>
+<g font-family="Arial,sans-serif" font-size="18" fill="#242d2a"><text x="917" y="133">Your skills</text><text x="1100" y="133">Python · SQL</text></g>
+<g stroke="#c3bdb0"><path d="M917 150h473M917 193h473M917 236h473"/></g>
+<g font-family="Arial,sans-serif" font-size="17" fill="#646b62"><text x="917" y="178">Offer A</text><text x="1030" y="178">Python · SQL</text><text x="917" y="221">Offer B</text><text x="1030" y="221">Python · SQL · dbt</text><text x="917" y="264">Offer C</text><text x="1030" y="264">SQL · dbt</text></g>
+<rect x="1290" y="202" width="98" height="86" fill="#355d4a"/><text x="1339" y="243" font-family="Georgia,serif" font-size="38" text-anchor="middle" fill="#f4f0e7">+2</text><text x="1339" y="272" font-family="Arial,sans-serif" font-size="12" text-anchor="middle" fill="#f4f0e7">with dbt</text>
+<g font-family="Courier New,monospace" font-size="12" letter-spacing="1.1" fill="#5e655e"><text x="48" y="367">COUNTRY FILTERS / SOURCE AUDIT / SKILL COVERAGE</text><text x="917" y="367">MENTION COVERAGE ≠ HIRING PROBABILITY</text></g>
+</svg>

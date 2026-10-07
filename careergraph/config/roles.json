@@ -1,0 +1,7 @@
+{
+  "analytics_engineer": {"label": "Analytics Engineer", "aliases": ["analytics engineer", "ingénieur analytics", "analytisk ingenjör"]},
+  "data_engineer": {"label": "Data Engineer", "aliases": ["data engineer", "dataingenjör", "ingénieur data", "ingénieur données", "ingeniero de datos", "dateningenieur", "data-engineer"]},
+  "data_scientist": {"label": "Data Scientist", "aliases": ["data scientist", "datascientist", "data science", "científico de datos", "scientifique des données"]},
+  "data_analyst": {"label": "Data Analyst", "aliases": ["data analyst", "dataanalytiker", "dataanalytist", "datenanalyst", "analyste data", "analyste de données", "analista de datos", "analista dati", "bi analyst", "business intelligence analyst"]},
+  "other": {"label": "Other / unclassified", "aliases": []}
+}

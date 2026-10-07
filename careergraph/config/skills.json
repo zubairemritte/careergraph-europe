@@ -1,0 +1,30 @@
+{
+  "version": "2026-10-07.1",
+  "description": "Curated technology and method vocabulary. Local identifiers; not an ESCO mapping. Mentions, not inferred requirements.",
+  "skills": [
+    {"id": "python", "label": "Python", "aliases": ["Python"]},
+    {"id": "sql", "label": "SQL", "aliases": ["SQL", "T-SQL", "Transact-SQL"]},
+    {"id": "power_bi", "label": "Power BI", "aliases": ["Power BI", "PowerBI"]},
+    {"id": "tableau", "label": "Tableau", "aliases": ["Tableau"]},
+    {"id": "excel", "label": "Excel", "aliases": ["Excel"]},
+    {"id": "r", "label": "R", "aliases": ["R programming", "R language", "RStudio", "tidyverse", "R programmering", "langage R"]},
+    {"id": "dbt", "label": "dbt", "aliases": ["dbt", "data build tool"]},
+    {"id": "airflow", "label": "Airflow", "aliases": ["Airflow"]},
+    {"id": "spark", "label": "Apache Spark", "aliases": ["Apache Spark", "PySpark", "Spark SQL"]},
+    {"id": "docker", "label": "Docker", "aliases": ["Docker"]},
+    {"id": "git", "label": "Git", "aliases": ["Git", "GitHub", "GitLab"]},
+    {"id": "aws", "label": "AWS", "aliases": ["AWS", "Amazon Web Services"]},
+    {"id": "gcp", "label": "Google Cloud", "aliases": ["GCP", "Google Cloud", "Google Cloud Platform"]},
+    {"id": "azure", "label": "Azure", "aliases": ["Azure"]},
+    {"id": "bigquery", "label": "BigQuery", "aliases": ["BigQuery"]},
+    {"id": "snowflake", "label": "Snowflake", "aliases": ["Snowflake"]},
+    {"id": "terraform", "label": "Terraform", "aliases": ["Terraform"]},
+    {"id": "mlflow", "label": "MLflow", "aliases": ["MLflow"]},
+    {"id": "scikit_learn", "label": "scikit-learn", "aliases": ["scikit-learn", "sklearn", "scikit learn"]},
+    {"id": "pytorch", "label": "PyTorch", "aliases": ["PyTorch"]},
+    {"id": "statistics", "label": "Statistics", "aliases": ["statistics", "statistical analysis", "statistiques", "statistik", "estadística", "statistica", "statistiek"]},
+    {"id": "experimentation", "label": "Experimentation", "aliases": ["A/B testing", "A/B tests", "A/B-testing", "AB testing", "randomized experiment", "randomised experiment"]},
+    {"id": "causal_inference", "label": "Causal inference", "aliases": ["causal inference", "inférence causale", "kausale Inferenz", "inferencia causal"]},
+    {"id": "data_quality", "label": "Data quality", "aliases": ["data quality", "qualité des données", "Datenqualität", "datakvalitet", "calidad de datos", "datakwaliteit"]}
+  ]
+}
