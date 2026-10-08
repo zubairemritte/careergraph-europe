@@ -10,6 +10,7 @@ Date: **7 October 2026**. Runtime: **Python 3.12**. This is a working local firs
 | Static analysis | `ruff check careergraph tests scripts` passed |
 | JavaScript syntax | `node --check careergraph/static/app.js` passed |
 | Package installation | Editable installation built and installed successfully |
+| Hosted GitHub Actions | [Run 1 passed](https://github.com/zubairemritte/careergraph-europe/actions/runs/37674475590) for implementation commit `ca7db3c92a2362983287d60eab23e0cd3094f35f` |
 | Offline offer pipeline | 773 input rows → 768 accepted, 2 duplicates, 3 rejected |
 | Offline extraction regression | 32 authored cases / 62 expected labels; all matched the stated contract |
 | Actual JobTech collection | 317 input rows → 287 retained, 27 duplicates, 3 out-of-scope workplace countries |
@@ -46,7 +47,7 @@ The 128 cells are 16 countries × 8 quarters. The 108 observed values include ea
 
 - The environment's browser policy blocked loopback and local-file navigation. The application rendering and click flows were **not visually verified in a live browser**. API tests and JavaScript syntax checks are not substitutes for that check. The quickstart provides the local review path.
 - Docker was unavailable in the development environment. The recipe is supplied but its build and runtime have not been executed here.
-- A GitHub Actions workflow is included. Its hosted result should be checked on the corresponding commit; local test success alone is not a hosted CI success claim.
+- The hosted GitHub Actions run linked above passed the lint, test and offline-reproduction steps on the implementation commit. Later commit statuses should be checked separately.
 - No load test, independent real-ad annotation study, semantic model evaluation, cloud deployment or SLA has been completed.
 - No offer connector beyond the verified JobTech country scope has been activated.
 

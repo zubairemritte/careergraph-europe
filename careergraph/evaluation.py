@@ -3,16 +3,21 @@
 import json
 from pathlib import Path
 
+from careergraph.contracts import JsonObject
 from careergraph.text import extract_skills
 
 
-def evaluate(path: str | Path) -> dict:
-    cases = json.loads(Path(path).read_text(encoding="utf-8"))
-    tp = fp = fn = exact = 0
-    errors = []
+def evaluate(path: str | Path) -> JsonObject:
+    """Compare detected labels with authored expectations; this is not a market accuracy estimate."""
+    cases: list[JsonObject] = json.loads(Path(path).read_text(encoding="utf-8"))
+    tp: int = 0
+    fp: int = 0
+    fn: int = 0
+    exact: int = 0
+    errors: list[JsonObject] = []
     for case in cases:
-        predicted = {m["skill"] for m in extract_skills(case["text"])}
-        expected = set(case["skills"])
+        predicted: set[str] = {m["skill"] for m in extract_skills(case["text"])}
+        expected: set[str] = set(case["skills"])
         tp += len(predicted & expected)
         fp += len(predicted - expected)
         fn += len(expected - predicted)
@@ -25,8 +30,8 @@ def evaluate(path: str | Path) -> dict:
                     "missed": sorted(expected - predicted),
                 }
             )
-    precision = tp / (tp + fp) if tp + fp else None
-    recall = tp / (tp + fn) if tp + fn else None
+    precision: float | None = tp / (tp + fp) if tp + fp else None
+    recall: float | None = tp / (tp + fn) if tp + fn else None
     return {
         "scope": "Authored regression cases only; not an independent multilingual job-ad evaluation.",
         "cases": len(cases),

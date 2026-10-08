@@ -3,20 +3,23 @@ from pathlib import Path
 
 import pytest
 
+from careergraph.contracts import JsonObject
 from careergraph.text import clean_text, extract_skills, role_family
 
 CASES = json.loads((Path(__file__).parent / "fixtures/skill_cases.json").read_text())
 
 
 @pytest.mark.parametrize("case", CASES, ids=[case["id"] for case in CASES])
-def test_mention_contract(case):
+def test_mention_contract(case: JsonObject) -> None:
+    """Verify mention contract."""
     matches = extract_skills(case["text"])
     assert {m["skill"] for m in matches} == set(case["skills"])
     for match in matches:
         assert case["text"][match["start"] : match["end"]] == match["matched_text"]
 
 
-def test_html_and_contact_minimization():
+def test_html_and_contact_minimization() -> None:
+    """Verify html and contact minimization."""
     text = clean_text(
         "<p>Python <strong>and SQL</strong></p><script>alert(1)</script> Contact a.b@example.org or +46 70 123 45 67."
     )
@@ -34,5 +37,6 @@ def test_html_and_contact_minimization():
         ("Analyst", "other"),
     ],
 )
-def test_role_boundary(title, expected):
+def test_role_boundary(title: str, expected: str) -> None:
+    """Verify role boundary."""
     assert role_family(title) == expected

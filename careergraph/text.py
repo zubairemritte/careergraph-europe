@@ -6,72 +6,80 @@ import unicodedata
 from html.parser import HTMLParser
 
 from careergraph.catalog import ROLES, SKILLS
+from careergraph.contracts import SkillMention
 
 
 class PlainText(HTMLParser):
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initialize parser state without retaining scripts or style contents."""
         super().__init__()
-        self.parts = []
-        self.skip = 0
+        self.parts: list[str] = []
+        self.skip: int = 0
 
-    def handle_starttag(self, tag, attrs):
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        """Suppress executable/style content and keep word boundaries between block elements."""
         if tag in {"script", "style"}:
             self.skip += 1
         elif tag in {"p", "br", "li", "div"}:
             self.parts.append(" ")
 
-    def handle_endtag(self, tag):
+    def handle_endtag(self, tag: str) -> None:
+        """Close suppressed content and restore a space at the end of a block."""
         if tag in {"script", "style"}:
             self.skip = max(0, self.skip - 1)
         elif tag in {"p", "li", "div"}:
             self.parts.append(" ")
 
-    def handle_data(self, data):
+    def handle_data(self, data: str) -> None:
+        """Keep visible text only while outside suppressed script/style elements."""
         if not self.skip:
             self.parts.append(data)
 
 
 def clean_text(value: str) -> str:
-    parser = PlainText()
+    """Strip HTML and contact patterns, then collapse whitespace for stable evidence offsets."""
+    parser: PlainText = PlainText()
     parser.feed(value)
-    text = html.unescape("".join(parser.parts))
-    text = re.sub(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", "[email removed]", text)
-    text = re.sub(r"(?<!\w)\+?\d[\d ()-]{7,}\d(?!\w)", "[phone removed]", text)
-    return re.sub(r"\s+", " ", text).strip()
+    text: str = html.unescape("".join(parser.parts))
+    text = re.sub("[\\w.+-]+@[\\w.-]+\\.[A-Za-z]{2,}", "[email removed]", text)
+    text = re.sub("(?<!\\w)\\+?\\d[\\d ()-]{7,}\\d(?!\\w)", "[phone removed]", text)
+    return re.sub("\\s+", " ", text).strip()
 
 
 def folded(value: str) -> str:
+    """Fold case and accents for conservative multilingual title matching."""
     return "".join(
         c for c in unicodedata.normalize("NFKD", value.casefold()) if not unicodedata.combining(c)
     )
 
 
 def role_family(title: str) -> str:
+    """Return the first configured title-alias family, or the unclassified fallback."""
     title = folded(title)
     for role, spec in ROLES.items():
         if any(
-            re.search(r"(?<!\w)" + re.escape(folded(a)) + r"(?!\w)", title) for a in spec["aliases"]
+            re.search("(?<!\\w)" + re.escape(folded(a)) + "(?!\\w)", title) for a in spec["aliases"]
         ):
             return role
     return "other"
 
 
-PATTERNS = {
+PATTERNS: dict[str, re.Pattern[str]] = {
     key: re.compile(
-        r"(?<!\w)(?:"
+        "(?<!\\w)(?:"
         + "|".join(re.escape(a) for a in sorted(item["aliases"], key=len, reverse=True))
-        + r")(?!\w)",
+        + ")(?!\\w)",
         re.IGNORECASE,
     )
     for key, item in SKILLS.items()
 }
 
 
-def extract_skills(text: str) -> list[dict]:
+def extract_skills(text: str) -> list[SkillMention]:
     """Keep one evidence span per skill; optional/negated mentions still count as mentions."""
-    result = []
+    result: list[SkillMention] = []
     for skill, pattern in PATTERNS.items():
-        match = pattern.search(text)
+        match: re.Match[str] | None = pattern.search(text)
         if match:
             result.append(
                 {

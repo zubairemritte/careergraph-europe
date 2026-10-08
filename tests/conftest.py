@@ -1,24 +1,30 @@
+from pathlib import Path
+
 import pytest
 
+from careergraph.contracts import JsonObject
 from careergraph.db import init_db
 from careergraph.demo import seed_demo
 
 
 @pytest.fixture
-def db(tmp_path):
+def db(tmp_path: Path) -> Path:
+    """Create an empty temporary database for isolated checks."""
     path = tmp_path / "test.db"
     init_db(path)
     return path
 
 
 @pytest.fixture
-def demo_db(db):
+def demo_db(db: Path) -> Path:
+    """Load the synthetic cohort only when a full-suite test explicitly requests it."""
     seed_demo(db)
     return db
 
 
 @pytest.fixture
-def jobtech_record():
+def jobtech_record() -> JsonObject:
+    """Provide one authored provider record with workplace mapping and contact fields."""
     return {
         "id": "test-1",
         "headline": "Data Analyst",

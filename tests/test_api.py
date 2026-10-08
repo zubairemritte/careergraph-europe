@@ -1,9 +1,12 @@
+from pathlib import Path
+
 from fastapi.testclient import TestClient
 
 from careergraph.api import create_app
 
 
-def test_application_contract_and_country_selection(demo_db):
+def test_application_contract_and_country_selection(demo_db: Path) -> None:
+    """Verify application contract and country selection."""
     with TestClient(create_app(demo_db)) as client:
         assert client.get("/health").json()["status"] == "ok"
         assert client.get("/").status_code == 200
@@ -19,7 +22,8 @@ def test_application_contract_and_country_selection(demo_db):
         assert client.get("/api/benchmark").json()["available"] is False
 
 
-def test_invalid_filters_cannot_turn_into_unbounded_or_injected_queries(demo_db):
+def test_invalid_filters_cannot_turn_into_unbounded_or_injected_queries(demo_db: Path) -> None:
+    """Verify invalid filters cannot turn into unbounded or injected queries."""
     with TestClient(create_app(demo_db)) as client:
         for query in [
             "country=UK",
@@ -36,7 +40,8 @@ def test_invalid_filters_cannot_turn_into_unbounded_or_injected_queries(demo_db)
         assert client.post("/api/collect").status_code == 404
 
 
-def test_live_unavailable_is_not_demo_fallback(demo_db):
+def test_live_unavailable_is_not_demo_fallback(demo_db: Path) -> None:
+    """Verify live unavailable is not demo fallback."""
     with TestClient(create_app(demo_db)) as client:
         result = client.get("/api/overview?mode=live&country=FR").json()
         assert result["sample"]["availability"] == "not_collected"

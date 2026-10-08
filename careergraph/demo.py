@@ -2,12 +2,14 @@
 
 import random
 from datetime import date
+from pathlib import Path
 
 from careergraph.catalog import COUNTRIES, ROLES, SKILLS
+from careergraph.contracts import JsonObject
 from careergraph.pipeline import begin_run, fail_run, ingest
 
-DEMO_DATE = date(2026, 10, 1)
-BUNDLES = {
+DEMO_DATE: date = date(2026, 10, 1)
+BUNDLES: dict[str, list[str]] = {
     "data_analyst": [
         "sql",
         "excel",
@@ -42,15 +44,16 @@ BUNDLES = {
 }
 
 
-def demo_records(seed: int = 17) -> list[dict]:
-    randomizer = random.Random(seed)
-    records = []
+def demo_records(seed: int = 17) -> list[JsonObject]:
+    """Build seeded fictional records and deliberate duplicate/rejection fixtures; make no requests."""
+    randomizer: random.Random = random.Random(seed)
+    records: list[JsonObject] = []
     for country in sorted(COUNTRIES):
         for role, pool in BUNDLES.items():
             for number in range(12):
-                skills = sorted(randomizer.sample(pool, randomizer.randint(2, 5)))
-                text = ", ".join(SKILLS[s]["aliases"][0] for s in skills)
-                source_id = f"demo-{country}-{role}-{number:02}"
+                skills: list[str] = sorted(randomizer.sample(pool, randomizer.randint(2, 5)))
+                text: str = ", ".join(SKILLS[s]["aliases"][0] for s in skills)
+                source_id: str = f"demo-{country}-{role}-{number:02}"
                 records.append(
                     {
                         "source_id": source_id,
@@ -66,7 +69,6 @@ def demo_records(seed: int = 17) -> list[dict]:
                         "kind": "demo",
                     }
                 )
-    # Repeated query hit + identical content under another ID + invalid/future/expired rows.
     records.extend([dict(records[0]), {**records[1], "source_id": "demo-duplicate-id"}])
     records.extend(
         [
@@ -78,8 +80,9 @@ def demo_records(seed: int = 17) -> list[dict]:
     return records
 
 
-def seed_demo(db):
-    run_id = begin_run(
+def seed_demo(db: str | Path) -> JsonObject:
+    """Publish the authored demo cohort using its fixed fixture date, separated from live samples."""
+    run_id: str = begin_run(
         db,
         "synthetic",
         "demo",

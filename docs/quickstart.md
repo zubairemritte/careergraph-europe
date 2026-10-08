@@ -1,27 +1,50 @@
 # Quickstart: from checkout to an explainable result
 
-## 1. Install
+## 1. Install with Poetry
 
-Use Python 3.12 and Git. No cloud account, database server or API secret is needed for the first release.
+Use Python 3.12, Git and Poetry 2.5.1. Python support is deliberately restricted to the validated 3.12 series. No cloud account or source credentials are needed.
+
+Install Poetry in its own environment, outside the project. Choose one operating-system block.
+
+**macOS / Linux** (Python 3.12 already installed):
 
 ```bash
-git clone https://github.com/zubairemritte/careergraph-europe.git
-cd careergraph-europe
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements-dev.lock
-python -m pip install --no-deps -e .
+python3.12 -m venv "$HOME/careergraph-tools"
+"$HOME/careergraph-tools/bin/python" -m pip install poetry==2.5.1
+export PATH="$HOME/careergraph-tools/bin:$PATH"
 ```
 
-On Windows PowerShell, create the environment with `py -3.12 -m venv .venv` and activate it with `.venv\Scripts\Activate.ps1`. If activation is restricted, invoke `.venv\Scripts\python.exe` directly in place of `python`; changing the system execution policy is unnecessary.
+**Windows PowerShell** (Python 3.12 already installed):
 
-An editable installation means changes in this checkout are immediately used when you run the package. The lock files record the versions used for release verification.
+```powershell
+py -3.12 -m venv "$env:USERPROFILE\careergraph-tools"
+& "$env:USERPROFILE\careergraph-tools\Scripts\python.exe" -m pip install poetry==2.5.1
+$env:Path = "$env:USERPROFILE\careergraph-tools\Scripts;$env:Path"
+```
+
+The PATH command applies to the current terminal. Repeat it in a new terminal, or invoke Poetry using the full path above with `poetry` in place of `python`. See the [official installation documentation](https://python-poetry.org/docs/#installation) for other supported installation methods.
+
+From either operating system:
+
+```bash
+poetry --version
+git clone https://github.com/zubairemritte/careergraph-europe.git
+cd careergraph-europe
+poetry env use 3.12
+poetry sync
+poetry check --lock
+poetry run pytest -q tests/test_smoke.py
+```
+
+Poetry creates `.venv` and installs the project in editable mode. Direct dependency versions live in `pyproject.toml`; `poetry.lock` pins transitive versions and distribution hashes. Use `poetry sync` after pulling an update. Dependency upgrades require an intentional change and a new reviewed lock, not a routine `poetry update` during setup.
+
+The five smoke checks use tiny fixtures and temporary databases. They make no public-API requests and do not generate the full synthetic dataset. The following sections are the full local exploration path, run explicitly when ready.
 
 ## 2. Build the offline demonstration
 
 ```bash
-python -m careergraph demo
-python -m careergraph benchmark --from-file examples/eurostat-context.json
+poetry run careergraph demo
+poetry run careergraph benchmark --from-file examples/eurostat-context.json
 ```
 
 The first command should report **773 input records, 768 accepted offers, 2 duplicates and 3 rejected records**. The extra rows deliberately exercise duplicate, invalid, future and expired-record handling.
@@ -33,7 +56,7 @@ The SQLite database is created at `data/careergraph.db`. This directory is exclu
 ## 3. Open the application
 
 ```bash
-python -m careergraph serve
+poetry run careergraph serve
 ```
 
 Open `http://127.0.0.1:8000` in your browser. Keep the terminal running. Press `Ctrl+C` there to stop the server.
@@ -53,7 +76,7 @@ Changing a country in demo mode demonstrates software behaviour; it does not est
 ## 4. Collect actual offers
 
 ```bash
-python -m careergraph collect --source jobtech --country SE --pages 2
+poetry run careergraph collect --source jobtech --country SE --pages 2
 ```
 
 This runs four default keyword queries, with at most two 100-record pages per query. Overlapping results are deduplicated. The source's reported query totals must not be added together.
@@ -63,7 +86,7 @@ The verified connector currently accepts workplaces in Sweden. `--country DE` do
 Custom queries are explicit and recorded:
 
 ```bash
-python -m careergraph collect --country SE --query "data analyst" --query "dataanalytiker" --pages 2
+poetry run careergraph collect --country SE --query "data analyst" --query "dataanalytiker" --pages 2
 ```
 
 The latest successful collection for a source/country replaces the **current analytical sample**, while earlier successful runs remain in the database. Changing the query set changes the sample. It is not an incremental merge with old results.
@@ -73,7 +96,7 @@ Select **Collected offers** in the interface. Choose the relevant role family: k
 ## 5. Refresh official context
 
 ```bash
-python -m careergraph benchmark
+poetry run careergraph benchmark
 ```
 
 The connector requests the latest eight quarters of the pinned Eurostat series. A new snapshot is stored only after the dimensions and values pass validation. Unsupported or missing country/quarter values remain null.
@@ -81,16 +104,16 @@ The connector requests the latest eight quarters of the pinned Eurostat series. 
 To make a new dated public-statistics export:
 
 ```bash
-python -m careergraph benchmark --export data/eurostat-context-latest.json
+poetry run careergraph benchmark --export data/eurostat-context-latest.json
 ```
 
 ## 6. Reproduce a result without the browser
 
 ```bash
-python -m careergraph inspect --mode demo --country DE --role data_analyst --skills python,sql
-python -m careergraph coverage
-python -m careergraph evaluate
-python -m pytest -q
+poetry run careergraph inspect --mode demo --country DE --role data_analyst --skills python,sql
+poetry run careergraph coverage
+poetry run careergraph evaluate
+poetry run pytest -q
 ```
 
 The JSON output includes the selected sample, skill counts, one-skill gains, co-occurrence relationships and collection records. API documentation is at `/docs`; its JSON specification is at `/openapi.json`.
@@ -99,9 +122,9 @@ The JSON output includes the selected sample, skill counts, one-skill gains, co-
 
 | Symptom | Meaning / action |
 | --- | --- |
-| `No module named careergraph` | Run from the repository root or install with `python -m pip install --no-deps -e .`. |
-| `No module named fastapi` | Use the project's virtual environment and install the lock file. |
-| Port 8000 is busy | Run `python -m careergraph serve --port 8001`, then open port 8001. |
+| `No module named careergraph` | Run from the repository root, run `poetry sync`, and use `poetry run careergraph`. |
+| `No module named fastapi` | Run `poetry sync` and execute the command through `poetry run`. |
+| Port 8000 is busy | Run `poetry run careergraph serve --port 8001`, then open port 8001. |
 | No live offers for a country | Its connector may not exist or no successful collection has run. Check `coverage`. |
 | Zero offers after filtering | This is an empty *sample*, not a claim that no jobs exist. Clear the date/role filters. |
 | Source returns 429 or a longer retry delay | The run stops safely. Respect the provider's delay before trying again. |
@@ -113,8 +136,8 @@ The JSON output includes the selected sample, skill counts, one-skill gains, co-
 The database option comes **before** the command:
 
 ```bash
-python -m careergraph --db data/research.db demo
-python -m careergraph --db data/research.db serve --port 8001
+poetry run careergraph --db data/research.db demo
+poetry run careergraph --db data/research.db serve --port 8001
 ```
 
 This is useful for keeping an experiment separate from an existing demonstration.

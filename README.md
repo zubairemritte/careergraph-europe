@@ -9,7 +9,7 @@
 
 Built by [Zubair Emritte](https://github.com/zubairemritte).
 
-[Start here](docs/quickstart.md) · [Methodology](docs/methodology.md) · [Sources & coverage](docs/sources.md) · [Architecture](docs/architecture.md) · [Release evidence](docs/release-0.1.md)
+[Start here](docs/quickstart.md) · [Methodology](docs/methodology.md) · [Sources & coverage](docs/sources.md) · [Read the code](docs/code-guide.md) · [Release evidence](docs/release-0.2.md)
 
 ## The question
 
@@ -19,7 +19,7 @@ CareerGraph makes that calculation inspectable. Select a country and role, see s
 
 The project combines labour-market analysis, data-quality controls, SQL modelling and an explainable product. It does not assign a hiring probability or rank candidates.
 
-## What works in 0.1
+## What works in 0.2
 
 - **16 configured countries:** country is an ISO alpha-2 parameter, separate from the connector. No country is hard-coded into the analytical formulas.
 - **A real collection path:** JobTech / Arbetsförmedlingen → validation → deduplication → SQLite → FastAPI → an English web interface.
@@ -28,13 +28,14 @@ The project combines labour-market analysis, data-quality controls, SQL modellin
 - **One-skill analysis:** inspect how many additional offers become fully covered with respect to their detected skill mentions.
 - **Skill relationships:** co-occurrence counts and Jaccard similarity, with minimum support.
 - **Visible data quality:** collection scope, timestamps, rejected records, duplicate counts, query caps, source hashes and preserved successful snapshots.
-- **Reproducibility:** an offline demo, automated tests, dependency locks, CI configuration and a Docker recipe.
+- **Readable engineering:** documented, typed functions; provider classes, an injectable connector protocol and a collection service with explicit responsibilities.
+- **Reproducibility:** Poetry, exact direct versions, a committed `poetry.lock`, strict static type checks and small fixture checks in CI.
 
 ### Coverage, without assumptions
 
 | Layer | Available in this release |
 | --- | --- |
-| Country filters | Austria, Belgium, Denmark, Finland, France, Germany, Ireland, Italy, Luxembourg, Netherlands, Poland, Portugal, Spain, Sweden, Switzerland, United Kingdom |
+| Country filters | 16 European markets selected by ISO alpha-2 code; [country catalog](careergraph/config/countries.json) |
 | Demo offers | 768 deliberately fictional offers across all 16 countries; generated locally |
 | Actual offers | Verified JobTech connector for workplaces in Sweden; first successful collection recorded in the release report |
 | Official context | Eurostat `jvs_q_r21`, with missing country/quarter values preserved rather than invented |
@@ -44,38 +45,42 @@ The project combines labour-market analysis, data-quality controls, SQL modellin
 
 ## Run locally
 
-Python 3.12 is the validated runtime. The commands below work from the repository root.
+Use Python 3.12, Git and Poetry 2.5.1. The commands below work from the repository root. [Installation on Windows, macOS and Linux](docs/quickstart.md).
 
 ```bash
 git clone https://github.com/zubairemritte/careergraph-europe.git
 cd careergraph-europe
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements-dev.lock
-python -m pip install --no-deps -e .
-python -m careergraph demo
-python -m careergraph benchmark --from-file examples/eurostat-context.json
-python -m careergraph serve
+poetry env use 3.12
+poetry sync
+poetry run pytest -q tests/test_smoke.py
+```
+
+The smoke checks use tiny temporary fixtures and no public API. To explore the full offline application on your own machine:
+
+```bash
+poetry run careergraph demo
+poetry run careergraph benchmark --from-file examples/eurostat-context.json
+poetry run careergraph serve
 ```
 
 Open **http://127.0.0.1:8000**. The default offer dataset is labelled **Illustrative demo**. The official context panel is based on the separately attributed Eurostat snapshot.
 
-On Windows, use `py -3.12 -m venv .venv` and `.venv\Scripts\Activate.ps1`. See the [step-by-step guide](docs/quickstart.md) for expected results and troubleshooting.
+Poetry manages `.venv`; manual activation is unnecessary. The [quickstart](docs/quickstart.md) explains expected results and troubleshooting.
 
 ### Collect actual data
 
 ```bash
-python -m careergraph collect --source jobtech --country SE --pages 2
-python -m careergraph benchmark
+poetry run careergraph collect --source jobtech --country SE --query "data analyst" --pages 1
+poetry run careergraph benchmark
 ```
 
 Then choose **Collected offers** in the interface. These commands use public, documented sources without credentials. Requests are bounded; publication is an explicit operation, not a background scrape.
 
 ```bash
-python -m careergraph inspect --mode live --country SE --role data_analyst --skills python,sql
-python -m careergraph coverage
-python -m pytest -q
-python -m ruff check careergraph tests
+poetry run careergraph inspect --mode live --country SE --role data_analyst --skills python,sql
+poetry run careergraph coverage
+poetry run mypy
+poetry run ruff check careergraph tests scripts
 ```
 
 ## Follow one result
@@ -110,7 +115,7 @@ The [architecture note](docs/architecture.md) explains the current limits and th
 | Why a source is used or deferred | [Source register](docs/sources.md) |
 | Tables, fields and processing rules | [Data contract](docs/data-contract.md) |
 | Reliability and recovery | [Operations](docs/operations.md) |
-| What was actually verified | [Release 0.1 evidence](docs/release-0.1.md) |
+| What was actually verified | [Release 0.2 checks](docs/release-0.2.md) and [0.1 collection evidence](docs/release-0.1.md) |
 | Trade-offs | [Architecture decisions](docs/decisions.md) |
 
 **Status:** working local first release, not a production service or a complete European job database. Extraction is a transparent baseline; the authored regression set is not evidence of general accuracy on multilingual advertisements.

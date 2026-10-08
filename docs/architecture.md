@@ -29,6 +29,7 @@ Synthetic and live runs have different mode identifiers and cannot form a mixed 
 | `http.py` | Bounded GET requests, retry policy, timeouts, safe error messages |
 | `connectors.py` | Provider-specific normalization and JSON-stat decoding |
 | `models.py` | Typed offer contract and field validation |
+| `contracts.py` | Typed evidence, catalog and benchmark structures; injectable connector protocol and collection batch |
 | `pipeline.py` | Run lifecycle, validation, duplicate handling, atomic snapshot commit |
 | `sql/schema.sql` | Relational tables, constraints and indexes |
 | `text.py` | Sanitization, role classification and evidence spans |
@@ -39,6 +40,8 @@ Synthetic and live runs have different mode identifiers and cannot form a mixed 
 | `evaluation.py` | Auditable mention-extraction regression evaluation |
 
 Paths in this table are relative to `careergraph/`.
+
+Version 0.2 uses `JobTechConnector` and `EurostatConnector` for provider-specific state and an injectable transport. `CollectionService` owns the local database target and advert run lifecycle. Analytical formulas remain pure functions. The [code guide](code-guide.md) explains each class, typed boundary and the requirements for an additional verified source.
 
 ## Storage and consistency
 

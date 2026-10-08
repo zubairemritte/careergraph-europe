@@ -44,7 +44,7 @@ The interface is in English. Country configuration includes major European econo
 
 ## Included and excluded
 
-| Implemented | Not implemented in 0.1 |
+| Implemented | Not implemented in 0.2 |
 | --- | --- |
 | Country-variable data model and 16-country demo | Verified live offer coverage in all 16 countries |
 | JobTech connector and Eurostat connector | EURES partner access or licensed Adzuna analytics |

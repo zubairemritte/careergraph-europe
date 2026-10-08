@@ -5,9 +5,9 @@
 The validated path is a local Python 3.12 virtual environment. Collection commands write SQLite snapshots; the read-only server presents them. There are no hidden scheduled jobs or paid cloud services.
 
 ```bash
-python -m careergraph demo
-python -m careergraph benchmark --from-file examples/eurostat-context.json
-python -m careergraph serve
+poetry run careergraph demo
+poetry run careergraph benchmark --from-file examples/eurostat-context.json
+poetry run careergraph serve
 ```
 
 ## Refresh actual sources
@@ -15,9 +15,9 @@ python -m careergraph serve
 Run the offer collector, inspect its report, then refresh official context independently:
 
 ```bash
-python -m careergraph collect --country SE --pages 2
-python -m careergraph benchmark
-python -m careergraph coverage
+poetry run careergraph collect --country SE --pages 2
+poetry run careergraph benchmark
+poetry run careergraph coverage
 ```
 
 Changing keyword queries changes the next current sample. Record the same query configuration when comparing repeated runs. A bounded search cannot prove that an offer absent from a later sample was closed.
@@ -78,12 +78,18 @@ Databases contain collected offer text. Keep backups out of Git. No destructive 
 ## Tests and CI
 
 ```bash
-python -m pytest -q
-python -m ruff check careergraph tests
-python -m careergraph evaluate
+poetry run pytest -q
+poetry run ruff check careergraph tests
+poetry run careergraph evaluate
 ```
 
-Tests use fixtures and temporary databases; they do not depend on source availability. The CI workflow checks the same deterministic path. A public API smoke run is documented separately, not mixed into routine tests.
+Tests use fixtures and temporary databases; they do not depend on source availability. Automatic CI runs strict type checking, lint and eight small fixture checks only. It does not run the full demo, full test suite or live collection. The full test command above is for explicit local validation.
+
+```bash
+poetry check --lock
+poetry run mypy
+poetry run pytest -q tests/test_smoke.py
+```
 
 The authored extraction regression report is useful for detecting changed behaviour. It must not be marketed as 100% accuracy on real multilingual adverts.
 
