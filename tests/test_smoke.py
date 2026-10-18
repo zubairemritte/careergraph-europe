@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from careergraph.analysis import overview
+from careergraph.analysis import cohort, describe, overview
 from careergraph.api import create_app
 from careergraph.connectors import EurostatConnector, JobTechConnector
 from careergraph.contracts import JsonObject
@@ -52,6 +52,21 @@ def test_small_batch_reconciles_and_exposes_evidence(db: Path, jobtech_record: J
         assert second["description"]["text"][match["start_offset"] : match["end_offset"]] == "dbt"
         assert client.get("/api/overview?country=DE&mode=live").json()["sample"]["offers"] == 0
         assert "someone@example.invalid" not in str(evidence)
+
+    offers: list[JsonObject]
+    runs: list[JsonObject]
+    offers, runs = cohort(db, mode="live", country="SE")
+    original_runs: list[JsonObject] = copy.deepcopy(runs)
+    original_offers: list[JsonObject] = copy.deepcopy(offers)
+    summary: JsonObject = describe(offers, runs, known={"python", "sql"})
+    assert runs == original_runs
+    assert offers == original_offers
+    repeated: JsonObject = describe(offers, runs, known={"python", "sql"})
+    assert repeated["bridge"] == summary["bridge"]
+    assert repeated["quality"] == summary["quality"]
+    assert repeated["skills"] == summary["skills"]
+    assert isinstance(summary["runs"][0]["scope"], dict)
+    assert "position" not in summary["runs"][0]
 
 
 def test_failed_refresh_preserves_the_one_record_sample(

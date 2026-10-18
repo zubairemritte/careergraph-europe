@@ -131,7 +131,11 @@ def skill_bridge(offers: list[JsonObject], known: set[str]) -> JsonObject:
 def describe(
     offers: list[JsonObject], runs: list[JsonObject], *, known: set[str], min_support: int = 3
 ) -> JsonObject:
-    """Calculate sample denominators, frequencies, supported pairs and transparent collection quality."""
+    """Summarize a sample without modifying offers or collection-audit inputs.
+
+    Runs use the SQLite contract: scope and report contain JSON text. Returned
+    run details are decoded copies, so the same inputs can be analyzed again.
+    """
     counts: Counter[str] = Counter(skill for o in offers for skill in set(o["skills"]))
     n: int = len(offers)
     pairs: Counter[tuple[str, str]] = Counter(
@@ -153,11 +157,12 @@ def describe(
         if c >= min_support
     ]
     relationships.sort(key=lambda p: (-p["support"], -p["jaccard"], p["left"], p["right"]))
-    reports: list[JsonObject] = [json.loads(run["report"]) for run in runs]
-    for run in runs:
-        run["scope"] = json.loads(run["scope"])
-        run["report"] = json.loads(run["report"])
-        run.pop("position", None)
+    public_runs: list[JsonObject] = [
+        {key: value for key, value in run.items() if key != "position"}
+        | {"scope": json.loads(run["scope"]), "report": json.loads(run["report"])}
+        for run in runs
+    ]
+    reports: list[JsonObject] = [run["report"] for run in public_runs]
     timestamps: list[datetime] = [datetime.fromisoformat(run["completed_at"]) for run in runs]
     age: float | None = (
         (datetime.now(UTC) - min(timestamps)).total_seconds() / 3600 if timestamps else None
@@ -185,7 +190,7 @@ def describe(
             "duplicates_removed": sum(r["duplicates_removed"] for r in reports),
             "rejected_records": sum(r["rejected_records"] for r in reports),
         },
-        "runs": runs,
+        "runs": public_runs,
     }
 
 

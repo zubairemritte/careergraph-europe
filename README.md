@@ -17,12 +17,14 @@ Built by [Zubair Emritte](https://github.com/zubairemritte).
 
 CareerGraph makes that calculation inspectable. Select a country and role, see skill mentions and their denominators, then open the offers behind a suggested addition. Official economic statistics provide a separate layer of context.
 
+The data strategy uses documented, authorised APIs from established European employment services. Country is a configuration variable; each provider's access, reuse terms and actual workplace coverage are verified separately in the [source register](docs/sources.md).
+
 The project combines labour-market analysis, data-quality controls, SQL modelling and an explainable product. It does not assign a hiring probability or rank candidates.
 
 ## What works in 0.2
 
 - **16 configured countries:** country is an ISO alpha-2 parameter, separate from the connector. No country is hard-coded into the analytical formulas.
-- **A real collection path:** JobTech / Arbetsförmedlingen → validation → deduplication → SQLite → FastAPI → an English web interface.
+- **A real collection path:** a verified public employment-service API → validation → deduplication → SQLite → FastAPI → an English web interface.
 - **Official European context:** a Eurostat connector and a dated, attributed snapshot of quarterly vacancy rates.
 - **Traceable skill mentions:** 24 curated skills, versioned aliases and evidence excerpts; a conservative title-based role classifier.
 - **One-skill analysis:** inspect how many additional offers become fully covered with respect to their detected skill mentions.
@@ -37,7 +39,7 @@ The project combines labour-market analysis, data-quality controls, SQL modellin
 | --- | --- |
 | Country filters | 16 European markets selected by ISO alpha-2 code; [country catalog](careergraph/config/countries.json) |
 | Demo offers | 768 deliberately fictional offers across all 16 countries; generated locally |
-| Actual offers | Verified JobTech connector for workplaces in Sweden; first successful collection recorded in the release report |
+| Actual offers | One verified public employment-service adapter; [workplace coverage](docs/sources.md) and the first successful collection are documented |
 | Official context | Eurostat `jvs_q_r21`, with missing country/quarter values preserved rather than invented |
 | Other countries' offer feeds | Not connected yet; the UI explicitly says so |
 

@@ -35,3 +35,11 @@ The full suite, 768-offer synthetic pipeline, live collection, benchmark refresh
 The [0.1 evidence](release-0.1.md) records the earlier full verification and dated source collection. Its 64-test result describes that implementation commit, not a new full-suite run of 0.2. The previously reported local browser and Docker verification limitations still apply.
 
 Current actual offer coverage remains one verified official provider/workplace scope. The country catalog and the source register remain separate, and official economy-wide statistics remain separate from skill-demand calculations.
+
+## Follow-up review - 18 October 2026
+
+The overview now describes the European data strategy through established employment services and authorised APIs. Provider identities, actual workplace coverage, access rules and attribution remain in the source register and detailed technical documentation.
+
+A four-record regression fixture exposed an input mutation in `describe`: decoding run metadata in place changed the caller's audit objects, so analyzing the same inputs again could fail. The calculation now returns decoded copies and preserves its inputs. The same small fixture verifies unchanged offers and audits, repeated skill/quality results and compatible API metadata.
+
+The eight selected fixture checks passed again, as did strict mypy checks for 16 source files, Ruff lint and `poetry check --lock`. Package pins and the Poetry lock remain the validated 0.2 versions. No live collection, full synthetic pipeline, full suite, browser server or Docker execution was run for this review.
