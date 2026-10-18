@@ -37,6 +37,8 @@ def test_small_batch_reconciles_and_exposes_evidence(db: Path, jobtech_record: J
     assert report["rejected_records"] == 1
     assert report["rejection_reasons"] == {"outside_verified_country": 1}
     with TestClient(create_app(db)) as client:
+        assert client.get("/health").json()["status"] == "ok"
+        assert client.get("/").status_code == 200
         result: JsonObject = client.get(
             "/api/overview?mode=live&country=SE&role=data_analyst&skills=python,sql"
         ).json()
@@ -144,6 +146,13 @@ def test_public_functions_have_docstrings_and_typed_signatures() -> None:
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 assert ast.get_docstring(node), f"Missing docstring: {path.name}:{node.name}"
                 assert node.returns is not None, f"Missing return type: {node.name}"
+                documentation: str = ast.get_docstring(node) or ""
+                assert "Returns:" in documentation, f"Missing return explanation: {node.name}"
                 arguments = node.args.posonlyargs + node.args.args + node.args.kwonlyargs
                 arguments += [a for a in [node.args.vararg, node.args.kwarg] if a is not None]
                 assert all(a.annotation is not None or a.arg in {"self", "cls"} for a in arguments)
+                for argument in arguments:
+                    if argument.arg not in {"self", "cls"}:
+                        assert f"{argument.arg}:" in documentation, (
+                            f"Undocumented input: {node.name}.{argument.arg}"
+                        )

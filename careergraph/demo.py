@@ -45,7 +45,17 @@ BUNDLES: dict[str, list[str]] = {
 
 
 def demo_records(seed: int = 17) -> list[JsonObject]:
-    """Build seeded fictional records and deliberate duplicate/rejection fixtures; make no requests."""
+    """Build the deterministic fictional software dataset.
+
+    Args:
+        seed: Seed used by a local Random instance; default 17 preserves the demo contract.
+
+    Returns:
+        773 normalized fixture dictionaries: 768 distinct adverts plus intentional duplicate and rejected-record cases.
+
+    Side effects:
+        Creates in-memory fictional records only; no global random-state change, network request or database write.
+    """
     randomizer: random.Random = random.Random(seed)
     records: list[JsonObject] = []
     for country in sorted(COUNTRIES):
@@ -81,7 +91,20 @@ def demo_records(seed: int = 17) -> list[JsonObject]:
 
 
 def seed_demo(db: str | Path) -> JsonObject:
-    """Publish the authored demo cohort using its fixed fixture date, separated from live samples."""
+    """Store the authored demo using its fixed fixture calendar date.
+
+    Args:
+        db: Local SQLite target.
+
+    Returns:
+        The ingestion report, normally 773 input / 768 accepted / 2 duplicates / 3 rejected.
+
+    Raises:
+        Exception: Fatal storage failure is marked failed and re-raised.
+
+    Side effects:
+        Writes a new demo run; existing history remains. Uses DEMO_DATE, not today, so the fixture does not expire with time.
+    """
     run_id: str = begin_run(
         db,
         "synthetic",

@@ -2,6 +2,8 @@
 
 This documentation describes the running first release. It separates implemented behaviour, measured evidence and unresolved source or modelling limits.
 
+**New to the code? Start with [one entry point, five responsibilities](start-here.md).** It explains the few operational classes before introducing dictionary schemas and transport interfaces. Use the [function index](function-index.md) to find a definition and [compatibility](compatibility.md) to check the supported installation profiles.
+
 1. [Quickstart](quickstart.md): launch the app and reproduce a result.
 2. [Product](product.md): the user problem and the release boundary.
 3. [Methodology](methodology.md): what each measure means and how it is calculated.
@@ -13,5 +15,6 @@ This documentation describes the running first release. It separates implemented
 9. [Code guide](code-guide.md): class responsibilities, types and extension contracts.
 10. [Release 0.2](release-0.2.md): small checks for the Poetry and typing update.
 11. [Release 0.1](release-0.1.md): dated initial collection evidence and original verification.
+12. [Release 0.2.1](release-0.2.1.md): detailed function contracts and compatibility validation.
 
 For code navigation, start at `careergraph/cli.py`, follow collection into `connectors.py` and `pipeline.py`, then read `analysis.py`. The UI uses the same API responses that the tests exercise.

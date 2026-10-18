@@ -1,5 +1,7 @@
 # Read the implementation
 
+Begin with the [four entry points and responsibility map](start-here.md). This document is the technical reference; the [function index](function-index.md) locates every definition.
+
 The code keeps the business calculation separate from transport, provider field names and storage. Every application function and method starts with a concise English docstring and has typed arguments and a return type. Local data structures and class attributes have explicit annotations; iteration targets inherit their types from those structures.
 
 ## Class responsibilities
@@ -53,4 +55,4 @@ poetry run pytest -q tests/test_smoke.py
 
 `mypy` uses strict mode for application and startup code. Ruff checks signatures as well as ordinary code errors. The smoke test audits docstrings and typed signatures, including nested API handlers. Static checks do not prove source coverage or calculation correctness; the small data fixtures check those behaviours separately.
 
-The complete local suite remains available through `poetry run pytest -q`. Routine CI deliberately runs only the eight selected fixture checks recorded in the current release note.
+The complete local suite remains available through `poetry run pytest -q`. Routine CI deliberately runs only the ten selected fixture/installation checks recorded in [release 0.2.1](release-0.2.1.md), across the [four supported validation profiles](compatibility.md).

@@ -4,6 +4,8 @@
 
 Use Python 3.12, Git and Poetry 2.5.1. Python support is deliberately restricted to the validated 3.12 series. No cloud account or source credentials are needed.
 
+If Python 3.12 is absent, use the [uv Python installation guide](https://docs.astral.sh/uv/guides/install-python/) to install a native current 3.12 interpreter. Here uv manages only the interpreter; Poetry remains the project dependency manager. After `uv python install 3.12`, use the path printed by `uv python find 3.12` in place of `python3.12` below and pass that same path to `poetry env use`. Recent security-only Python 3.12 releases do not provide the old python.org binary installers.
+
 Install Poetry in its own environment, outside the project. Choose one operating-system block.
 
 **macOS / Linux** (Python 3.12 already installed):
@@ -33,12 +35,14 @@ cd careergraph-europe
 poetry env use 3.12
 poetry sync
 poetry check --lock
-poetry run pytest -q tests/test_smoke.py
+poetry run python -m pip check
+poetry run careergraph doctor
+poetry run pytest -q tests/test_smoke.py tests/test_environment.py
 ```
 
 Poetry creates `.venv` and installs the project in editable mode. Direct dependency versions live in `pyproject.toml`; `poetry.lock` pins transitive versions and distribution hashes. Use `poetry sync` after pulling an update. Dependency upgrades require an intentional change and a new reviewed lock, not a routine `poetry update` during setup.
 
-The five smoke checks use tiny fixtures and temporary databases. They make no public-API requests and do not generate the full synthetic dataset. The following sections are the full local exploration path, run explicitly when ready.
+The seven selected smoke/installation checks use tiny fixtures and temporary databases. They make no public-API requests and do not generate the full synthetic dataset. The following sections are the full local exploration path, run explicitly when ready.
 
 ## 2. Build the offline demonstration
 

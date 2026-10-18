@@ -18,25 +18,63 @@ class SourceError(RuntimeError):
 
 
 class ResponseReader(Protocol):
-    """The minimal byte-reading interface needed from an HTTP response."""
+    """Internal transport protocol describing read(size). Not a runtime object the project user needs to construct."""
 
     def read(self, size: int) -> bytes:
-        """Read at most the response-size budget supplied by the caller."""
+        """Describe the byte reader expected from an HTTP transport.
+
+        Args:
+            size: Maximum bytes the caller permits this read to return.
+
+        Returns:
+            Response bytes within the supplied read budget.
+
+        Side effects:
+            Protocol declaration only; the concrete transport implements the read.
+        """
         ...
 
 
 class Opener(Protocol):
-    """Injectable urllib-compatible transport, including its response lifecycle."""
+    """Internal transport protocol describing timed context-managed response opening. Only transport tests replace it."""
 
     def __call__(
         self, request: Request, *, timeout: float
     ) -> AbstractContextManager[ResponseReader]:
-        """Open one timed request; callers close the returned context manager."""
+        """Describe the injectable request-opening interface.
+
+        Args:
+            request: Prepared urllib Request with headers and the provider URL.
+            timeout: Per-request timeout in seconds.
+
+        Returns:
+            A context manager exposing ResponseReader and closing the response on exit.
+
+        Side effects:
+            Protocol declaration only; implementations may perform one HTTP request.
+        """
         ...
 
 
 def retry_delay(value: str | None, attempt: int) -> float:
-    """Decode Retry-After; stop instead of violating a delay beyond the retry budget."""
+    """Interpret a provider delay without retrying earlier than requested.
+
+    Args:
+        value: Retry-After seconds or HTTP date; None uses exponential backoff.
+        attempt: Zero-based retry attempt used for fallback delays.
+
+    Returns:
+        A nonnegative delay in seconds that fits the ten-second retry budget.
+
+    Raises:
+        SourceError: The requested wait exceeds the local retry budget; the run must stop.
+
+    Side effects:
+        Reads the UTC clock for an HTTP-date header; does not sleep.
+
+    Example:
+        retry_delay("2", 0) returns 2.0.
+    """
     try:
         seconds: float = float(value) if value else 2**attempt
     except ValueError:
@@ -50,14 +88,44 @@ def retry_delay(value: str | None, attempt: int) -> float:
 
 
 def open_response(request: Request, *, timeout: float) -> AbstractContextManager[ResponseReader]:
-    """Adapt urllib's dynamic response to the minimal typed read-and-close contract."""
+    """Adapt urllib to the small response-reader contract.
+
+    Args:
+        request: Prepared GET request.
+        timeout: Maximum wait in seconds for this transport call.
+
+    Returns:
+        A context manager around the urllib response.
+
+    Raises:
+        OSError: The underlying connection fails.
+        urllib.error.HTTPError: The provider returns an HTTP error response.
+
+    Side effects:
+        Performs one HTTP request. Retry handling belongs to get_json.
+    """
     return cast(AbstractContextManager[ResponseReader], urlopen(request, timeout=timeout))
 
 
 def get_json(
     url: str, *, opener: Opener | None = None, sleep: Callable[[float], None] = time.sleep
 ) -> JsonObject:
-    """GET a JSON object within the timeout, response-size and transient-retry budgets."""
+    """Retrieve one bounded provider JSON object with transient retries.
+
+    Args:
+        url: Documented provider URL, including its explicit query parameters.
+        opener: Optional urllib-compatible fake transport for offline tests.
+        sleep: Delay callback; tests can record delays instead of sleeping.
+
+    Returns:
+        The decoded top-level JSON object.
+
+    Raises:
+        SourceError: Nonretryable HTTP error, exhausted retries, excessive size/delay, invalid JSON or a nonobject response.
+
+    Side effects:
+        Up to three GET attempts; timeout 25 seconds and response cap 10 MB. Sleeps only for bounded transient retries.
+    """
     request: Request = Request(
         url, headers={"Accept": "application/json", "User-Agent": "CareerGraph-Europe/0.2"}
     )

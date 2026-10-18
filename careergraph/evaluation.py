@@ -8,7 +8,22 @@ from careergraph.text import extract_skills
 
 
 def evaluate(path: str | Path) -> JsonObject:
-    """Compare detected labels with authored expectations; this is not a market accuracy estimate."""
+    """Compare skill mentions with an authored regression-case file.
+
+    Args:
+        path: UTF-8 JSON array of cases containing id, text and expected local skill IDs.
+
+    Returns:
+        Label-level true/false positives and false negatives, micro precision/recall, exact matches and errors. Undefined precision/recall remain None.
+
+    Raises:
+        OSError: The case file cannot be read.
+        ValueError: The file is not valid JSON.
+        KeyError: A case is missing a required field.
+
+    Side effects:
+        Reads the case file and computes results in memory; this is not independent market-accuracy evidence.
+    """
     cases: list[JsonObject] = json.loads(Path(path).read_text(encoding="utf-8"))
     tp: int = 0
     fp: int = 0

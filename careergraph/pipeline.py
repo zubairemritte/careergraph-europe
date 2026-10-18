@@ -27,16 +27,46 @@ from careergraph.text import clean_text, extract_skills
 
 
 class CollectionService:
-    """Own a database target and publish only complete validated provider samples."""
+    """Operational class coordinating one advert-to-database workflow.
+
+    The instance stores a database Path. collect consumes an AdvertConnector, records the attempt and publishes only a complete successful ingestion. It does not implement provider field mappings.
+    """
 
     def __init__(self, db: str | Path) -> None:
-        """Select the local database without collecting or initializing data."""
+        """Select the database used by this collection service.
+
+        Args:
+            db: A local SQLite filename or Path.
+
+        Returns:
+            None; stores the target Path on this instance.
+
+        Side effects:
+            No database creation or source request until collect is called.
+        """
         self.db: Path = Path(db)
 
     def collect(
         self, connector: AdvertConnector, *, country: str, queries: list[str], pages: int = 2
     ) -> JsonObject:
-        """Audit a bounded collection; a failure leaves prior successful samples visible."""
+        """Audit and publish one complete source/country collection.
+
+        Args:
+            connector: AdvertConnector implementation that declares coverage and normalizes hits.
+            country: Configured workplace code; the verified adapter currently accepts SE only.
+            queries: One to eight nonempty search terms, each at most 100 characters.
+            pages: Page budget per query, from one to five; each page requests at most 100 hits.
+
+        Returns:
+            A run report with run_id, input/accepted/duplicate/rejected counts, reasons and request metadata.
+
+        Raises:
+            ValueError: The country or connector request configuration is invalid.
+            Exception: A fatal provider/storage error is recorded as failed, then re-raised.
+
+        Side effects:
+            Creates a run audit and requests a bounded batch. Only a fully successful transaction becomes current; a failed refresh preserves the previous successful sample.
+        """
         from careergraph.catalog import country_code
 
         code: str = country_code(country)
@@ -69,17 +99,52 @@ class CollectionService:
 
 
 def identity_record(record: JsonObject) -> JsonObject:
-    """Copy an already-normalized fixture so ingestion never edits its caller's data."""
+    """Copy the top level of an already-normalized fixture.
+
+    Args:
+        record: Offer-shaped dictionary used by the demo or direct ingestion.
+
+    Returns:
+        A shallow dictionary copy. Nested objects are not deep-copied.
+
+    Side effects:
+        Prevents ingestion's text-field cleanup from replacing values on the caller's dictionary.
+    """
     return dict(record)
 
 
 def now() -> str:
-    """Return a timezone-aware UTC timestamp for the collection audit."""
+    """Create a timezone-aware collection-audit timestamp.
+
+    Returns:
+        Current UTC datetime formatted as an ISO string.
+
+    Side effects:
+        Reads the system clock; writes nothing.
+    """
     return datetime.now(UTC).isoformat()
 
 
 def begin_run(db: str | Path, source: str, kind: str, country: str, scope: JsonObject) -> str:
-    """Create a running audit record before processing any provider observations."""
+    """Initialize the schema and create a running collection audit.
+
+    Args:
+        db: Local SQLite target.
+        source: Stable provider ID, such as jobtech or synthetic.
+        kind: demo or live; these data origins must remain separate.
+        country: Configured workplace code, or ALL for the multi-country demo.
+        scope: Serializable query/page/sampling settings to retain with this attempt.
+
+    Returns:
+        A new opaque run ID used by ingest and fail_run.
+
+    Raises:
+        sqlite3.Error: The audit cannot be stored.
+        TypeError: Scope contains values that JSON cannot serialize.
+
+    Side effects:
+        Creates the schema if required and commits a running audit before records are ingested.
+    """
     init_db(db)
     run_id: str = uuid.uuid4().hex
     with connect(db) as conn:
@@ -100,7 +165,22 @@ def begin_run(db: str | Path, source: str, kind: str, country: str, scope: JsonO
 
 
 def fail_run(db: str | Path, run_id: str, error: Exception) -> None:
-    """Mark a run failed using a safe error category; never store arbitrary source errors."""
+    """Record a failed attempt without exposing arbitrary provider error bodies.
+
+    Args:
+        db: Database containing the running audit.
+        run_id: Identifier returned by begin_run.
+        error: Fatal exception; only its type and a fixed safe message are retained.
+
+    Returns:
+        None. The audit becomes failed with a completion timestamp.
+
+    Raises:
+        sqlite3.Error: The audit update cannot be committed.
+
+    Side effects:
+        Updates the run report only. Does not publish partial adverts or replace an earlier successful sample.
+    """
     with connect(db) as conn:
         conn.execute(
             "UPDATE runs SET status='failed', completed_at=?, report=? WHERE run_id=?",
@@ -126,7 +206,27 @@ def ingest(
     metadata: JsonObject | None = None,
     as_of: date | None = None,
 ) -> JsonObject:
-    """Validate, deduplicate and atomically publish a complete normalized offer sample."""
+    """Validate, deduplicate and atomically store a complete offer sample.
+
+    Args:
+        db: Local SQLite target.
+        run_id: Existing running audit; its mode and country define the permitted sample.
+        records: Source observations or normalized demo fixtures.
+        normalize: Record-to-Offer-input callable; the default copies normalized fixtures.
+        metadata: Optional serializable request provenance included in the quality report.
+        as_of: Calendar date for future/expiry checks; defaults to the current UTC date.
+
+    Returns:
+        The run ID and reconciliation report. input_records equals accepted_offers + duplicates_removed + rejected_records.
+
+    Raises:
+        ValueError: The audit does not exist or is not running.
+        sqlite3.Error: A fatal storage error rolls back this sample.
+        TypeError: Fatal report metadata cannot be serialized.
+
+    Side effects:
+        Stores sanitized observations and exact description evidence. Bad records are counted/quarantined; run success and all accepted rows commit together.
+    """
     as_of = as_of or datetime.now(UTC).date()
     with connect(db) as conn:
         run: sqlite3.Row | None = conn.execute(
@@ -259,7 +359,25 @@ def collect_jobtech(
     pages: int = 2,
     fetch: JsonFetcher | None = None,
 ) -> JsonObject:
-    """Collect the verified provider through CollectionService with an injectable transport."""
+    """Run the public advert workflow through its adapter and service.
+
+    Args:
+        db: Local SQLite target.
+        country: Configured workplace code; the verified adapter currently accepts SE only.
+        queries: One to eight nonempty search terms, each at most 100 characters.
+        pages: Page budget per query, from one to five; each page requests at most 100 hits.
+        fetch: Optional injected source fetcher; None selects the bounded HTTP client.
+
+    Returns:
+        The same validated collection report returned by CollectionService.collect.
+
+    Raises:
+        ValueError: Country or search configuration is invalid.
+        Exception: Fatal source/storage failure is audited by the service and re-raised.
+
+    Side effects:
+        This is the CLI collect entry function. It constructs the two runtime objects; it does not duplicate their logic.
+    """
     connector: JobTechConnector = (
         JobTechConnector(fetch) if fetch is not None else JobTechConnector()
     )
@@ -268,7 +386,22 @@ def collect_jobtech(
 
 
 def save_benchmark(db: str | Path, snapshot: BenchmarkSnapshot) -> str:
-    """Store an attributed aggregate snapshot idempotently without creating advert rows."""
+    """Store an already-validated official snapshot independently of adverts.
+
+    Args:
+        db: Local SQLite target.
+        snapshot: BenchmarkSnapshot from EurostatConnector or a trusted exported snapshot.
+
+    Returns:
+        A content-derived snapshot ID. Saving the identical snapshot twice is idempotent.
+
+    Raises:
+        sqlite3.Error: The snapshot transaction cannot be committed.
+        KeyError: A supplied file does not follow the documented snapshot contract.
+
+    Side effects:
+        Creates schema if needed and writes official snapshots/cells. No network request or offer-row insertion.
+    """
     init_db(db)
     snapshot_id: str = hashlib.sha256(json.dumps(snapshot, sort_keys=True).encode()).hexdigest()[
         :24

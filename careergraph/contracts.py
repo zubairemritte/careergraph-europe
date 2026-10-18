@@ -14,20 +14,20 @@ type Normalizer = Callable[[JsonObject], JsonObject]
 
 
 class AliasSpec(TypedDict):
-    """An English label and its literal matching aliases."""
+    """Dictionary schema for a label and its literal aliases. No runtime object construction is required."""
 
     label: str
     aliases: list[str]
 
 
 class SkillSpec(AliasSpec):
-    """A stable local skill identifier; it is not an ESCO identifier."""
+    """Dictionary schema for one stable local skill ID, label and aliases. This is not an ESCO ID mapping."""
 
     id: str
 
 
 class Vocabulary(TypedDict):
-    """The versioned skill configuration shipped with the package."""
+    """Dictionary schema for the bundled skill version, explanatory description and skill list."""
 
     version: str
     description: str
@@ -35,7 +35,7 @@ class Vocabulary(TypedDict):
 
 
 class CohortFilters(TypedDict, total=False):
-    """Optional sample filters shared by the CLI and read-only HTTP endpoints."""
+    """Dictionary schema listing optional country/role/date/origin filters. It is a type description, not a filter engine."""
 
     mode: str
     country: str
@@ -44,7 +44,7 @@ class CohortFilters(TypedDict, total=False):
 
 
 class SkillMention(TypedDict):
-    """One exact match into a sanitized advert description."""
+    """Extractor-output dictionary schema. start/end are Python string offsets into sanitized text; the end is exclusive."""
 
     skill: str
     start: int
@@ -54,7 +54,7 @@ class SkillMention(TypedDict):
 
 
 class StoredSkillMention(TypedDict):
-    """The persisted/API evidence contract; SQL names remain stable across releases."""
+    """Stored/API evidence dictionary schema. Keeps start_offset/end_offset field names compatible with the SQL contract."""
 
     skill: str
     start_offset: int
@@ -64,7 +64,7 @@ class StoredSkillMention(TypedDict):
 
 
 class BenchmarkRow(TypedDict):
-    """One official country/quarter observation, including missingness."""
+    """Dictionary schema for one official country/quarter observation; a missing rate or flag remains None."""
 
     country: str
     quarter: str
@@ -73,7 +73,7 @@ class BenchmarkRow(TypedDict):
 
 
 class BenchmarkSnapshot(TypedDict):
-    """A dated, attributable aggregate snapshot kept separate from adverts."""
+    """Dictionary schema for one attributed official-statistics retrieval, its metadata, hash and country/quarter cells."""
 
     retrieved_at: str
     request_url: str
@@ -84,22 +84,57 @@ class BenchmarkSnapshot(TypedDict):
 
 @dataclass(frozen=True, slots=True)
 class CollectionBatch:
-    """Provider observations and the request audit for one bounded collection."""
+    """Data container, not an active service.
+
+    Carries the records and request audit produced by an advert adapter. Frozen fields prevent replacement; the contained record list is not deeply immutable.
+    """
 
     records: list[JsonObject]
     metadata: JsonObject
 
 
 class AdvertConnector(Protocol):
-    """The behaviour a new advert provider must implement before activation."""
+    """Static interface contract for an advert adapter.
+
+    Not a class to instantiate. A provider must expose source_id, supported_countries, collect and normalize; CollectionService uses that shared behaviour.
+    """
 
     source_id: str
     supported_countries: frozenset[str]
 
     def collect(self, country: str, queries: list[str], pages: int = 2) -> CollectionBatch:
-        """Retrieve a bounded batch; reject unsupported countries before any request."""
+        """Specify how an advert adapter retrieves one bounded batch.
+
+        Args:
+            country: Workplace code explicitly declared in the adapter's supported_countries.
+            queries: Search terms whose provider-specific bounds the adapter must validate.
+            pages: Maximum requested pages per query; the adapter enforces its permitted budget.
+
+        Returns:
+            CollectionBatch with provider records and request metadata.
+
+        Raises:
+            ValueError: An implementation must reject unsupported country/search settings.
+            SourceError: A concrete provider cannot supply a valid response.
+
+        Side effects:
+            Interface declaration only. Implementations perform retrieval; storage belongs to CollectionService.
+        """
         ...
 
     def normalize(self, raw: JsonObject) -> JsonObject:
-        """Map a provider record to Offer fields without inventing workplace coverage."""
+        """Specify the mapping from a provider hit to Offer input fields.
+
+        Args:
+            raw: One untrusted provider observation.
+
+        Returns:
+            A new Offer-shaped dictionary; runtime validation remains mandatory.
+
+        Raises:
+            ValueError: An implementation rejects out-of-scope or invalid provider fields.
+
+        Side effects:
+            Interface declaration only. Normalization should not fetch, store or change the caller's observation.
+        """
         ...

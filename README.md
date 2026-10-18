@@ -9,7 +9,7 @@
 
 Built by [Zubair Emritte](https://github.com/zubairemritte).
 
-[Start here](docs/quickstart.md) · [Methodology](docs/methodology.md) · [Sources & coverage](docs/sources.md) · [Read the code](docs/code-guide.md) · [Release evidence](docs/release-0.2.md)
+[Start here](docs/quickstart.md) · [Methodology](docs/methodology.md) · [Sources & coverage](docs/sources.md) · [Read the code](docs/start-here.md) · [Compatibility](docs/compatibility.md) · [Release evidence](docs/release-0.2.1.md)
 
 ## The question
 
@@ -21,7 +21,7 @@ The data strategy uses documented, authorised APIs from established European emp
 
 The project combines labour-market analysis, data-quality controls, SQL modelling and an explainable product. It does not assign a hiring probability or rank candidates.
 
-## What works in 0.2
+## What works in 0.2.1
 
 - **16 configured countries:** country is an ISO alpha-2 parameter, separate from the connector. No country is hard-coded into the analytical formulas.
 - **A real collection path:** a verified public employment-service API → validation → deduplication → SQLite → FastAPI → an English web interface.
@@ -54,7 +54,8 @@ git clone https://github.com/zubairemritte/careergraph-europe.git
 cd careergraph-europe
 poetry env use 3.12
 poetry sync
-poetry run pytest -q tests/test_smoke.py
+poetry run careergraph doctor
+poetry run pytest -q tests/test_smoke.py tests/test_environment.py
 ```
 
 The smoke checks use tiny temporary fixtures and no public API. To explore the full offline application on your own machine:
@@ -117,7 +118,7 @@ The [architecture note](docs/architecture.md) explains the current limits and th
 | Why a source is used or deferred | [Source register](docs/sources.md) |
 | Tables, fields and processing rules | [Data contract](docs/data-contract.md) |
 | Reliability and recovery | [Operations](docs/operations.md) |
-| What was actually verified | [Release 0.2 checks](docs/release-0.2.md) and [0.1 collection evidence](docs/release-0.1.md) |
+| What was actually verified | [Current release checks](docs/release-0.2.1.md) and [0.1 collection evidence](docs/release-0.1.md) |
 | Trade-offs | [Architecture decisions](docs/decisions.md) |
 
 **Status:** working local first release, not a production service or a complete European job database. Extraction is a transparent baseline; the authored regression set is not evidence of general accuracy on multilingual advertisements.

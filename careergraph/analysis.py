@@ -14,7 +14,21 @@ from careergraph.db import connect
 
 
 def latest_runs(conn: sqlite3.Connection, mode: str) -> list[JsonObject]:
-    """Select the last successful sample per source and workplace country for one data mode."""
+    """Select one latest successful run per provider/workplace scope.
+
+    Args:
+        conn: An open row-enabled SQLite connection.
+        mode: demo or live; callers validate this origin before selecting a cohort.
+
+    Returns:
+        Raw audit dictionaries including JSON-text scope/report and the internal row position.
+
+    Raises:
+        sqlite3.Error: The run query cannot be executed.
+
+    Side effects:
+        Reads only. Uses completion time and row order to break ties.
+    """
     rows: list[sqlite3.Row] = conn.execute(
         """
         SELECT * FROM (
@@ -36,7 +50,25 @@ def cohort(
     role: str = "all",
     since: str | None = None,
 ) -> tuple[list[JsonObject], list[JsonObject]]:
-    """Load the filtered current offer sample and evidence using bulk SQL queries."""
+    """Load the current filtered offers and their exact evidence.
+
+    Args:
+        db: Initialized local database target.
+        mode: demo or live; these cohorts are never combined.
+        country: Configured country or ALL.
+        role: Configured role family or all.
+        since: Optional inclusive publication-date lower bound as YYYY-MM-DD.
+
+    Returns:
+        An (offers, runs) tuple. Offers contain their skill IDs, stored mentions and source. Runs remain raw audit dictionaries; they describe whole selected collections.
+
+    Raises:
+        ValueError: Mode, country or role is invalid.
+        sqlite3.Error: The database cannot provide the requested cohort.
+
+    Side effects:
+        Reads only. Uses bulk evidence loading and the latest successful run per provider/country; does not merge historical snapshots.
+    """
     if mode not in {"demo", "live"}:
         raise ValueError("Mode must be demo or live")
     country = country_code(country, allow_all=True)
@@ -96,7 +128,21 @@ def cohort(
 
 
 def skill_bridge(offers: list[JsonObject], known: set[str]) -> JsonObject:
-    """Count offers whose only missing detected skill is a given addition; exclude empty skill sets."""
+    """Count the exact additional coverage from one skill.
+
+    Args:
+        offers: Selected offer dictionaries containing offer_id and detected skills.
+        known: Validated local skill IDs currently selected by the user.
+
+    Returns:
+        Baseline coverage and ranked one-skill gains. Offers with no detected skills are excluded from this metric's eligible denominator.
+
+    Side effects:
+        Pure calculation; does not edit offers or known skills. Mentions are not qualifications or hiring probabilities.
+
+    Example:
+        With known={"python", "sql"}, an offer with python/sql/dbt contributes one gain to dbt.
+    """
     eligible: list[JsonObject] = [o for o in offers if o["skills"]]
     covered: list[JsonObject] = [o for o in eligible if set(o["skills"]) <= known]
     gains: Counter[str] = Counter()
@@ -131,10 +177,23 @@ def skill_bridge(offers: list[JsonObject], known: set[str]) -> JsonObject:
 def describe(
     offers: list[JsonObject], runs: list[JsonObject], *, known: set[str], min_support: int = 3
 ) -> JsonObject:
-    """Summarize a sample without modifying offers or collection-audit inputs.
+    """Summarize one cohort while preserving the caller's offers and audits.
 
-    Runs use the SQLite contract: scope and report contain JSON text. Returned
-    run details are decoded copies, so the same inputs can be analyzed again.
+    Args:
+        offers: Filtered normalized offers returned by cohort.
+        runs: Raw cohort audits; scope/report must still be JSON strings.
+        known: Validated selected skill IDs.
+        min_support: Minimum advert co-occurrence count for displayed skill pairs.
+
+    Returns:
+        Sample size/freshness, frequencies, pairs, bridge, whole-run quality totals and decoded audit copies. Frequency denominators include every selected advert.
+
+    Raises:
+        ValueError: A raw audit JSON value is invalid.
+        TypeError: An audit was supplied already decoded instead of following cohort's contract.
+
+    Side effects:
+        Reads the clock for age. Does not modify either input; the same raw cohort can be summarized repeatedly.
     """
     counts: Counter[str] = Counter(skill for o in offers for skill in set(o["skills"]))
     n: int = len(offers)
@@ -201,7 +260,24 @@ def overview(
     min_support: int = 3,
     **filters: Unpack[CohortFilters],
 ) -> JsonObject:
-    """Combine current-sample metrics with the latest collection attempts, including failed refreshes."""
+    """Combine cohort metrics with the most recent collection attempts.
+
+    Args:
+        db: Initialized local SQLite target.
+        known: Selected local skill IDs; None means an empty known set.
+        min_support: Minimum pair support passed to describe.
+        filters: Optional mode, country, role and since values accepted by cohort.
+
+    Returns:
+        The response used by CLI inspect and GET /api/overview, including latest failed attempts beside the current successful data.
+
+    Raises:
+        ValueError: A selected skill or cohort filter is invalid.
+        sqlite3.Error: A read query fails.
+
+    Side effects:
+        Reads the database only. Does not collect, overwrite stored matches or fall back from live to demo.
+    """
     known_ids: set[str] = validate_skills(known or [])
     offers: list[JsonObject]
     runs: list[JsonObject]
@@ -237,7 +313,26 @@ def evidence(
     offset: int = 0,
     **filters: Unpack[CohortFilters],
 ) -> JsonObject:
-    """Page the underlying adverts, optionally restricted to exactly one missing detected skill."""
+    """Page the adverts behind a selected skill result.
+
+    Args:
+        db: Initialized local SQLite target.
+        known: Selected local skill IDs; None means no known skills.
+        missing_skill: Optional local skill ID; retain adverts with exactly this one missing detected skill.
+        limit: Maximum returned rows; the HTTP layer enforces 1-100.
+        offset: Rows to skip; the HTTP layer enforces a nonnegative value.
+        filters: Optional mode, country, role and since values accepted by cohort.
+
+    Returns:
+        Total matching adverts plus the page, stored evidence snippets and missing skill IDs. Full descriptions are not exposed.
+
+    Raises:
+        ValueError: A skill ID or cohort filter is invalid.
+        sqlite3.Error: The selected sample cannot be read.
+
+    Side effects:
+        Read-only drill-down. Direct Python callers should supply valid pagination bounds.
+    """
     known_ids: set[str] = validate_skills(known or [])
     offers: list[JsonObject]
     if missing_skill and missing_skill not in SKILLS:
@@ -272,7 +367,22 @@ def evidence(
 
 
 def benchmark(db: str | Path, country: str = "ALL") -> JsonObject:
-    """Read the latest official snapshot and retain missing values and attribution."""
+    """Read the latest attributed official snapshot for a country filter.
+
+    Args:
+        db: Initialized local SQLite target.
+        country: Configured country or ALL.
+
+    Returns:
+        Availability, metadata, hashes, attribution and country/quarter cells; an absent snapshot gives available=False and no rows.
+
+    Raises:
+        ValueError: The country parameter is invalid.
+        sqlite3.Error: The snapshot query fails.
+
+    Side effects:
+        Reads only. Missing cells remain None; no refresh or alternate-series substitution occurs.
+    """
     country = country_code(country, allow_all=True)
     with connect(db) as conn:
         snapshot: sqlite3.Row | None = conn.execute(
@@ -307,7 +417,20 @@ def benchmark(db: str | Path, country: str = "ALL") -> JsonObject:
 
 
 def coverage(db: str | Path) -> list[JsonObject]:
-    """Report configured countries, actual advert connectivity and latest-quarter statistical availability."""
+    """Report the difference between configured and connected markets.
+
+    Args:
+        db: Initialized local SQLite target.
+
+    Returns:
+        One row per configured country with offer-connector/run status and latest-quarter official-statistics availability.
+
+    Raises:
+        sqlite3.Error: The local availability queries fail.
+
+    Side effects:
+        Reads only. A ready connector is distinct from an actual successful collection.
+    """
     with connect(db) as conn:
         runs: list[JsonObject] = latest_runs(conn, "live")
     official: JsonObject = benchmark(db)

@@ -83,10 +83,12 @@ poetry run ruff check careergraph tests
 poetry run careergraph evaluate
 ```
 
-Tests use fixtures and temporary databases; they do not depend on source availability. Automatic CI runs strict type checking, lint and eight small fixture checks only. It does not run the full demo, full test suite or live collection. The full test command above is for explicit local validation.
+Tests use fixtures and temporary databases; they do not depend on source availability. Automatic CI runs strict type checking, lint and ten small fixture/installation checks on four OS/architecture profiles only. It does not run the full demo, full test suite or live collection. The full test command above is for explicit local validation.
 
 ```bash
 poetry check --lock
+poetry run python -m pip check
+poetry run careergraph doctor
 poetry run mypy
 poetry run pytest -q tests/test_smoke.py
 ```

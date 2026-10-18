@@ -6,7 +6,9 @@ import pytest
 from careergraph.contracts import JsonObject
 from careergraph.text import clean_text, extract_skills, role_family
 
-CASES = json.loads((Path(__file__).parent / "fixtures/skill_cases.json").read_text())
+CASES = json.loads(
+    (Path(__file__).parent / "fixtures/skill_cases.json").read_text(encoding="utf-8")
+)
 
 
 @pytest.mark.parametrize("case", CASES, ids=[case["id"] for case in CASES])

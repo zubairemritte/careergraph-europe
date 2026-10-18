@@ -18,7 +18,21 @@ from careergraph.db import default_db, init_db
 
 
 def create_app(db_path: str | Path | None = None) -> FastAPI:
-    """Build the local read-only API around one database; never trigger collection."""
+    """Assemble the local read-only API around one database.
+
+    Args:
+        db_path: SQLite target; None uses the configured default path.
+
+    Returns:
+        A FastAPI app with static assets, input validation, response headers and analytical endpoints.
+
+    Raises:
+        OSError: The database/resources are unavailable.
+        sqlite3.Error: The local schema cannot be initialized.
+
+    Side effects:
+        Initializes schema and mounts bundled resources. Does not start a server or collect data; CLI serve starts Uvicorn separately.
+    """
     db: Path = Path(db_path) if db_path is not None else default_db()
     init_db(db)
     app: FastAPI = FastAPI(
@@ -31,12 +45,34 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
 
     @app.exception_handler(ValueError)
     async def invalid_value(request: Request, exc: ValueError) -> JSONResponse:
-        """Translate invalid analytical parameters into an explicit HTTP 422 response."""
+        """Translate an analytical parameter error to an HTTP response.
+
+        Args:
+            request: Incoming request, supplied by FastAPI.
+            exc: Validation error raised by the analytical functions.
+
+        Returns:
+            HTTP 422 JSON with the explicit detail message.
+
+        Side effects:
+            HTTP exception callback; does not write to the database.
+        """
         return JSONResponse(status_code=422, content={"detail": str(exc)})
 
     @app.middleware("http")
     async def response_headers(request: Request, call_next: RequestResponseEndpoint) -> Response:
-        """Add browser security headers and prevent caching of personal skill query results."""
+        """Apply local browser response policy to each request.
+
+        Args:
+            request: Incoming HTTP request; its path selects the appropriate headers.
+            call_next: Middleware continuation that produces the endpoint response.
+
+        Returns:
+            The endpoint response with security headers and no-store for analytical API responses.
+
+        Side effects:
+            Changes response headers only; performs no collection or profile persistence.
+        """
         response: Response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "no-referrer"
@@ -50,17 +86,38 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
 
     @app.get("/", include_in_schema=False)
     def home() -> FileResponse:
-        """Serve the English local interface from bundled static assets."""
+        """Serve the packaged English interface.
+
+        Returns:
+            A FileResponse for static/index.html.
+
+        Side effects:
+            Reads a bundled asset; does not start a server or query a provider.
+        """
         return FileResponse(static / "index.html")
 
     @app.get("/health")
     def health() -> JsonObject:
-        """Report process health and package version, independently from source freshness."""
+        """Report that the local API process can answer a request.
+
+        Returns:
+            status=ok and the application version. This does not certify source freshness.
+
+        Side effects:
+            No source request or database write.
+        """
         return {"status": "ok", "version": __version__}
 
     @app.get("/api/catalog")
     def catalog() -> JsonObject:
-        """Expose English labels and versioned country, role and skill configuration."""
+        """Expose the versioned UI configuration.
+
+        Returns:
+            Country labels, role families, local skill specifications and vocabulary/package versions.
+
+        Side effects:
+            Returns bundled configuration; no provider or database request.
+        """
         return {
             "countries": COUNTRIES,
             "roles": ROLES,
@@ -78,7 +135,25 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
         skills: str = Query(default="", max_length=1000),
         min_support: int = Query(default=3, ge=1, le=1000),
     ) -> JsonObject:
-        """Validate HTTP filters and return the selected analytical sample with its audit."""
+        """Serve GET /api/overview using the shared analytical calculation.
+
+        Args:
+            mode: demo or live.
+            country: ISO country code or ALL.
+            role: Configured role family or all.
+            since: Optional inclusive publication date.
+            skills: Comma-separated local skill IDs; at most 1,000 characters.
+            min_support: Pair-support threshold from 1 to 1,000.
+
+        Returns:
+            The overview response for the selected cohort, including run provenance and latest attempts.
+
+        Raises:
+            ValueError: Invalid catalog filters are translated to HTTP 422 by the registered handler.
+
+        Side effects:
+            Read-only database query; no hidden collection or CV/profile storage.
+        """
         return overview(
             db,
             mode=mode,
@@ -100,7 +175,27 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
         limit: int = Query(default=12, ge=1, le=100),
         offset: int = Query(default=0, ge=0),
     ) -> JsonObject:
-        """Return bounded advert evidence and the exact missing-skill explanation."""
+        """Serve the bounded advert-evidence drill-down.
+
+        Args:
+            mode: demo or live.
+            country: ISO country code or ALL.
+            role: Configured role family or all.
+            since: Optional inclusive publication date.
+            skills: Comma-separated local skill IDs; at most 1,000 characters.
+            missing_skill: Optional one-missing-skill filter.
+            limit: Returned page size from 1 to 100.
+            offset: Nonnegative number of matching rows to skip.
+
+        Returns:
+            A paginated evidence response with source links, snippets and missing skill IDs.
+
+        Raises:
+            ValueError: Invalid IDs/filters become HTTP 422.
+
+        Side effects:
+            Read-only; does not expose full description bodies.
+        """
         return evidence(
             db,
             mode=mode,
@@ -115,12 +210,32 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
 
     @app.get("/api/benchmark")
     def get_benchmark(country: str = "ALL") -> JsonObject:
-        """Return the separately attributed official statistical context for a country filter."""
+        """Serve official context separately from observed skill demand.
+
+        Args:
+            country: Configured country or ALL.
+
+        Returns:
+            The latest local benchmark snapshot, or an explicit unavailable response.
+
+        Raises:
+            ValueError: An unsupported country becomes HTTP 422.
+
+        Side effects:
+            No network refresh; CLI benchmark performs collection explicitly.
+        """
         return benchmark(db, country)
 
     @app.get("/api/coverage")
     def get_coverage() -> JsonObject:
-        """Expose the country coverage ledger without inferring unconnected market data."""
+        """Serve the country coverage ledger.
+
+        Returns:
+            A countries array describing actual advert and benchmark availability.
+
+        Side effects:
+            Reads existing run/snapshot state only.
+        """
         return {"countries": coverage(db)}
 
     return app
